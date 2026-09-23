@@ -20,7 +20,7 @@ const MobileNav = () => {
     return (
         <div className=' md:hidden flex  items-center justify-between p-5'>
             {/* Logo */}
-            <h1 className={`text-[32px] ${volkhov.className}`}>
+            <h1 className={`text-[32px] text-[#484848] ${volkhov.className}`}>
                 FASCO
             </h1>
 
@@ -34,9 +34,9 @@ const MobileNav = () => {
 const DesktopNav = () => {
 
     return (
-        <div className=' md:flex hidden  items-center justify-between'>
+        <div className=' md:flex hidden items-center justify-between'>
             {/* Logo */}
-            <h1 className={`text-[52px] ${volkhov.className}`}>
+            <h1 className={`text-[52px] text-[#484848] ${volkhov.className}`}>
                 FASCO
             </h1>
 
