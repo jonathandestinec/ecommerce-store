@@ -1,14 +1,4 @@
-interface NewArrivals {
-    image: string;
-    name: string;
-    seller: string;
-    rating: number | 5;
-    reviews: number | 4500;
-    price: number | 95.50;
-    saleStatus: "Almost Sold Out" | "Sold" | "Available";
-    id: number;
-}
-
+import { NewArrivals } from "@/types"
 
 const newArivals: NewArrivals[] = [
     { image: "/assets/new-arrivals/product1.png", name: "Shiny Dress", seller: "AI Karom", rating: 5, reviews: 4500, price: 95.50, saleStatus: "Almost Sold Out", id: 1 },

@@ -2,11 +2,9 @@ import { volkhov } from '@/styles/fonts'
 import Image from 'next/image'
 import React from 'react'
 import Button from './button';
+import { NavLinks } from '@/types';
+import { MenuIcon } from 'lucide-react';
 
-interface NavLinks {
-    text: string;
-    url: string;
-}
 
 const links: NavLinks[] = [
     { text: "Home", url: "/home" },
@@ -20,8 +18,14 @@ const links: NavLinks[] = [
 
 const MobileNav = () => {
     return (
-        <div className=' md:hidden flex  items-center justify-between'>
+        <div className=' md:hidden flex  items-center justify-between p-5'>
+            {/* Logo */}
+            <h1 className={`text-[32px] ${volkhov.className}`}>
+                FASCO
+            </h1>
 
+            {/* Hamburger */}
+            <MenuIcon />
         </div>
     )
 }
@@ -43,7 +47,7 @@ const DesktopNav = () => {
                         <li key={i.url} className=' text-[16px]'>
                             {
                                 i.text === "Signup" ? (
-                                    <Button text='Signup' />
+                                    <Button text='Signup' className='px-15.5' />
                                 ) : (
                                     <a href={i.url}>{i.text}</a>
                                 )
