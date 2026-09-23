@@ -260,7 +260,7 @@ const page = () => {
 
             {
               newArivals.map(product => (
-                <div key={product.id} className='md:w-96.5 h-max w-52 bg-white shadow-[0_40px_90px_0_rgba(0,0,0,0.06)] rounded-[10px] md:px-6.25 px-3 pt-3.75 pb-5 md:pb-8.75 md:ml-0 md:mr-0 ml-auto mr-auto'>
+                <div key={product.id} className='md:w-96.5 h-max w-60 bg-white shadow-[0_40px_90px_0_rgba(0,0,0,0.06)] rounded-[10px] md:px-6.25 px-3 pt-3.75 pb-5 md:pb-8.75 md:ml-0 md:mr-0 ml-auto mr-auto'>
                   <Image src={product.image} alt='' width={400} height={400} />
 
                   <div className='w-full h-max flex items-center justify-between mt-3'>
