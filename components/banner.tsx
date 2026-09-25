@@ -8,7 +8,7 @@ const Banner = () => {
     return (
         <div>
             {/* Banner Section */}
-            <section className={cn('w-full h-max md:mt-25 mt-10 ml-auto mr-auto ${poppins.className} antialiased bg-white py-13.75 flex items-center justify-center')}>
+            <section className={cn(`w-full h-max md:mt-25 mt-10 ml-auto mr-auto antialiased bg-white py-13.75 flex items-center justify-center`)}>
 
                 {/* Inner */}
                 <div className='w-full'>

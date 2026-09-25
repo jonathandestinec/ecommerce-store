@@ -26,7 +26,7 @@ const page = () => {
 
           {/* Man 1 Container*/}
           <div className='md:h-full bg-[#E0E0E0] relative rounded-[10px] overflow-hidden hidden md:block'>
-            <Image src={`/assets/Hero/man2.png?v=${Date.now()}`} width={100} height={100} className='md:w-98 w-50 md:absolute md:bottom-0' alt='Man 2' unoptimized />
+            <Image src={"/assets/Hero/man2.png"} width={100} height={100} className='md:w-98 w-50 md:absolute md:bottom-0' alt='Man 2' unoptimized />
           </div>
 
           {/* Middle Container */}
@@ -34,7 +34,7 @@ const page = () => {
 
             {/* Group Girls Image */}
             <div className='w-full bg-[#E0E0E0] md:h-37.5 h-max rounded-[10px] relative overflow-hidden flex items-center justify-center'>
-              <Image src={`/assets/Hero/girls1.png?v=${Date.now()}`} width={100} height={100} alt='Girls 1' className='w-95.75 h-max md:absolute bottom-0' unoptimized />
+              <Image src={"/assets/Hero/girls1.png"} width={100} height={100} alt='Girls 1' className='w-95.75 h-max md:absolute bottom-0' unoptimized />
             </div>
 
             {/* Text Container */}
@@ -58,14 +58,14 @@ const page = () => {
 
             {/* Group Girls Image */}
             <div className='w-full h-37.5 rounded-[10px] relative overflow-hidden flex items-center justify-center'>
-              <Image src={`/assets/Hero/girls2.png?v=${Date.now()}`} width={100} height={100} alt='Girls 2' className='w-95.75 md:absolute bottom-0' unoptimized />
+              <Image src={"/assets/Hero/girls2.png"} width={100} height={100} alt='Girls 2' className='w-95.75 md:absolute bottom-0' unoptimized />
             </div>
 
           </div>
 
           {/* Man 2 Container*/}
           <div className='md:h-full bg-[#E0E0E0] relative rounded-[10px] overflow-hidden md:flex hidden items-center justify-center'>
-            <Image src={`/assets/Hero/man1.png?v=${Date.now()}`} width={100} height={100} className='md:w-62.25 absolute bottom-0' alt='Man 1' unoptimized />
+            <Image src={"/assets/Hero/man1.png"} width={100} height={100} className='md:w-62.25 absolute bottom-0' alt='Man 1' unoptimized />
           </div>
 
         </div>
@@ -122,7 +122,7 @@ const page = () => {
       </section>
 
       {/* New arrivals */}
-      <section className={cn('w-full h-max md:mt-25 mt-10 ml-auto mr-auto ${poppins.className} antialiased bg-white py-13.75 flex items-center justify-center')}>
+      <section className={cn(`w-full h-max md:mt-25 mt-10 ml-auto mr-auto ${poppins.className} antialiased bg-white py-13.75 flex items-center justify-center`)}>
 
         {/* Inner */}
         <div className='px-5'>
@@ -214,7 +214,7 @@ const page = () => {
       <FollowUs />
 
       {/* Reviews */}
-      <section className={cn('w-full h-max mt-10 md:mt-25 ml-auto mr-auto ${poppins.className} antialiased bg-[#FAFAFA] py-13.75 flex items-center justify-center')}>
+      <section className={cn(`w-full h-max mt-10 md:mt-25 ml-auto mr-auto ${poppins.className} antialiased bg-[#FAFAFA] py-13.75 flex items-center justify-center`)}>
 
         {/* Inner */}
         <div className='md:px-0 px-5'>
