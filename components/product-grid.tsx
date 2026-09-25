@@ -12,6 +12,7 @@ const ProductGrid = () => {
     const [productGridLayout, setProductGridLayout] = useState("")
 
     const handleChangeLayout = (name: string, __class: string) => {
+        console.log("here")
         setProductGridLayout(__class)
     }
 
@@ -33,7 +34,7 @@ const ProductGrid = () => {
                 <div className='hidden md:flex items-center justify-between gap-2.5'>
                     {
                         productLayouts.map((productLayout, index) => (
-                            <div key={index} className={cn('size-8.5 bg-[#F2F2F2] flex items-center justify-center')} onClick={() => {
+                            <div key={index} className={cn('size-8.5 bg-[#F2F2F2] flex items-center justify-center cursor-pointer')} onClick={() => {
                                 handleChangeLayout(productLayout.layoutName, productLayout.__class)
                             }}>
                                 {productLayout.layoutIcon}
