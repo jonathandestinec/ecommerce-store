@@ -15,10 +15,10 @@ const page = () => {
     <div className=' w-full'>
 
       {/* Header */}
-      <section className={`w-full max-w-7xl h-max md:mt-10 ml-auto mr-auto ${poppins.className} antialiased`}>
+      <section className={`relative w-full h-max md:mt-10 ${poppins.className} antialiased md:shadow-[0_24px_48px_-24px_rgba(68,68,68,0.18)]`}>
 
         {/* Whole Content Container */}
-        <div className='w-full md:h-[540px] grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 md:mt-10 mt-0 p-5 md:p-0'>
+        <div className='mx-auto w-full max-w-5xl md:h-[600px] grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 md:mt-10 mt-0 p-5 md:p-0'>
 
           {/* Man 1 Container*/}
           <div className='col-start-1 row-start-1 h-40 md:col-auto md:row-auto md:h-full bg-[#E0E0E0] relative rounded-lg md:rounded-[10px] overflow-hidden md:block'>
@@ -67,8 +67,8 @@ const page = () => {
         </div>
 
         {/* Brand icons */}
-        <div className='flex items-center justify-center w-full md:h-28 h-max md:mt-3 mt-0 py-5 shadow-[0_20px_52px_0_rgba(68,68,68,0.04)] px-5'>
-          <div className='w-full md:w-7xl flex items-center justify-between gap-2 md:gap-0'>
+        <div className='flex items-center justify-center w-full md:h-32 h-max md:mt-3 mt-0 py-5 px-5'>
+          <div className='mx-auto flex w-full max-w-5xl items-center justify-between gap-2 md:gap-0'>
             <Image src={'/assets/Hero/logo-2.png'} width={196} height={56} className='w-[18%] max-w-40' alt='Chanel' />
             <Image src={'/assets/Hero/logo-3.png'} width={196} height={56} className='w-[18%] max-w-40' alt='Louis Vuitton' />
             <Image src={'/assets/Hero/logo-1.png'} width={196} height={56} className='w-[18%] max-w-40' alt='Prada' />

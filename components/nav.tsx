@@ -33,7 +33,7 @@ export default function Nav() {
       <Link href="/" className={`${volkhov.className} text-3xl text-[#484848] md:text-[42px]`}>FASCO</Link>
       <div className="hidden items-center gap-8 md:flex lg:gap-10">
         {(showStoreIcons ? storeLinks : links).map((link, index) => {
-          const active = link.text === 'Home' ? pathname === '/' : link.text === 'Shop' ? pathname === '/fashion' : link.text === 'Products' ? pathname.startsWith('/products/') : pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+          const active = showStoreIcons && (link.text === 'Home' ? pathname === '/' : link.text === 'Shop' ? pathname === '/fashion' : link.text === 'Products' ? pathname.startsWith('/products/') : pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href)))
           return <Link key={`${link.text}-${index}`} href={link.href} aria-current={active ? 'page' : undefined} className={`relative py-2 text-sm text-[#484848] transition hover:text-black after:absolute after:-bottom-0.5 after:left-[-8px] after:h-px after:w-[calc(100%+16px)] after:origin-center after:scale-x-0 after:bg-[#555] after:transition-transform ${active ? 'after:scale-x-100' : ''}`}>{link.text}</Link>
         })}
         {showStoreIcons ? <details className="group relative">
