@@ -14,58 +14,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const MobileHome = () => (
-  <main className='mobile-home bg-[#fbfaf8] text-[#484848]'>
-    <section className='px-5 pb-8 pt-2'>
-      <div className='relative overflow-hidden rounded-[24px] bg-[#dedbd7] px-5 pb-5 pt-7'>
-        <div className='relative z-10 max-w-[230px]'>
-          <p className='text-[10px] font-medium uppercase tracking-[0.28em] text-[#77716b]'>New collection / 2024</p>
-          <h1 className={`${volkhov.className} mt-4 text-[48px] leading-[0.9] text-[#484848]`}>Ultimate<br /><span className='text-transparent' style={{ WebkitTextStroke: '1px #484848' }}>Sale</span></h1>
-          <p className='mt-4 max-w-[190px] text-[12px] leading-5 text-[#69635d]'>A considered edit of everyday pieces made to move with you.</p>
-          <Link href='/fashion'><Button text='Shop now' className='mt-5 px-7 text-[11px] uppercase tracking-[0.12em]' /></Link>
-        </div>
-        <Image src='/assets/Hero/man1.png' width={260} height={430} alt='Model wearing the new collection' className='absolute -bottom-4 -right-10 h-[285px] w-auto object-contain' unoptimized />
-        <div className='absolute bottom-4 left-5 right-5 border-t border-[#484848]/20 pt-2 text-[9px] uppercase tracking-[0.18em] text-[#77716b]'>FASCO / women&apos;s edit</div>
-      </div>
-    </section>
-
-    <section className='border-y border-[#e8e4df] px-5 py-5'>
-      <div className='flex items-center justify-between gap-4 overflow-x-auto pb-1'>
-        {[['logo-2.png', 'Chanel'], ['logo-3.png', 'Louis Vuitton'], ['logo-1.png', 'Prada'], ['logo-4.png', 'Calvin Klein'], ['logo.png', 'Denim']].map(([src, name]) => <Image key={name} src={`/assets/Hero/${src}`} width={100} height={35} alt={name} className='h-auto w-[70px] shrink-0 object-contain opacity-75' />)}
-      </div>
-    </section>
-
-    <section className='px-5 py-12'>
-      <div className='flex items-end justify-between gap-4'><div><p className='text-[10px] uppercase tracking-[0.25em] text-[#99928b]'>Limited edit</p><h2 className={`${volkhov.className} mt-2 text-[30px]`}>Deals of the month</h2></div><Link href='/deals' className='shrink-0 text-[11px] font-medium underline underline-offset-4'>View all</Link></div>
-      <div className='mt-6 overflow-hidden rounded-[18px] bg-[#e8e2dc]'><Image src='/assets/deals/woman1.png' width={480} height={560} alt='Featured sale look' className='h-[300px] w-full object-cover' unoptimized /><div className='flex items-center justify-between px-4 py-4'><div><p className='text-[10px] uppercase tracking-[0.18em] text-[#99928b]'>Spring sale</p><p className={`${volkhov.className} mt-1 text-[24px]`}>30% off</p></div><Link href='/deals' className='rounded-full bg-[#484848] px-4 py-3 text-[10px] uppercase tracking-[0.1em] text-white'>Shop sale</Link></div></div>
-    </section>
-
-    <section className='bg-white px-5 py-12'>
-      <p className='text-[10px] uppercase tracking-[0.25em] text-[#99928b]'>Curated for you</p><h2 className={`${volkhov.className} mt-2 text-[32px]`}>New arrivals</h2><p className='mt-3 max-w-[310px] text-[12px] leading-5 text-[#8a8a8a]'>The pieces everyone is reaching for right now.</p>
-      <div className='mt-6 flex gap-2 overflow-x-auto pb-2'>{["Women's", "Men's", 'Accessories'].map((tab, i) => <button key={tab} className={`shrink-0 rounded-full px-4 py-2 text-[11px] ${i === 0 ? 'bg-[#484848] text-white' : 'bg-[#f5f3f0] text-[#8a8a8a]'}`}>{tab}</button>)}</div>
-      <div className='mt-6 grid grid-cols-2 gap-3'>{newArivals.slice(0, 4).map(product => <article key={product.id} className='min-w-0'><div className='overflow-hidden rounded-[14px] bg-[#f1efed]'><Image src={product.image} width={300} height={360} alt={product.name} className='aspect-[0.82] w-full object-cover' /></div><h3 className='mt-3 truncate text-[13px] font-medium'>{product.name}</h3><p className='mt-1 text-[11px] text-[#8a8a8a]'>{product.seller}</p><p className='mt-2 text-[13px] font-medium'>${product.price}</p></article>)}</div>
-      <Link href='/new' className='mt-8 block rounded-full border border-[#484848] py-3 text-center text-[11px] uppercase tracking-[0.14em]'>View all arrivals</Link>
-    </section>
-
-    <section className='px-5 py-12'><div className='rounded-[22px] bg-[#d9d9d9] p-6'><p className='text-[10px] uppercase tracking-[0.25em] text-[#77716b]'>The women collection</p><h2 className={`${volkhov.className} mt-3 text-[32px] leading-tight`}>Peaky Blinders</h2><p className='mt-3 text-[12px] leading-5 text-[#69635d]'>Sharp silhouettes, soft layers, and timeless neutrals for the season ahead.</p><Link href='/fashion' className='mt-6 inline-block rounded-full bg-[#484848] px-5 py-3 text-[10px] uppercase tracking-[0.12em] text-white'>Explore collection</Link></div></section>
-
-    <section className='bg-[#f5f3f0] px-5 py-12'><p className='text-[10px] uppercase tracking-[0.25em] text-[#99928b]'>From our community</p><h2 className={`${volkhov.className} mt-2 text-[31px]`}>Follow us on Instagram</h2><div className='mt-6 grid grid-cols-3 gap-2'>{['/assets/followus/1.png','/assets/followus/2.png','/assets/followus/3.png','/assets/followus/4.png','/assets/followus/5.png','/assets/followus/6.png'].map((src, i) => <Image key={src} src={src} width={140} height={160} alt={`Instagram style ${i + 1}`} className='aspect-[0.8] w-full rounded-[10px] object-cover' unoptimized />)}</div></section>
-
-    <section className='px-5 py-14 text-center'><h2 className={`${volkhov.className} text-[30px]`}>Stay in the loop</h2><p className='mx-auto mt-3 max-w-[290px] text-[12px] leading-5 text-[#8a8a8a]'>New drops, private sales, and styling notes delivered occasionally.</p><div className='mt-6 flex rounded-full border border-[#ded9d3] bg-white p-1'><input aria-label='Email address' placeholder='Your email address' className='min-w-0 flex-1 bg-transparent px-4 text-[12px] outline-none' /><button className='rounded-full bg-[#484848] px-4 py-3 text-[10px] uppercase tracking-[0.08em] text-white'>Join</button></div></section>
-  </main>
-)
-
 const page = () => {
   return (
     <div className='w-full'>
-      <div className='md:hidden'><MobileHome /></div>
-      <div className='hidden md:block'>
-
       {/* Header */}
       <section className={`w-full max-w-[1030px] h-max md:mt-8 ml-auto mr-auto ${poppins.className} antialiased`}>
 
         {/* Whole Content Container */}
-        <div className='w-full md:h-[520px] grid grid-cols-1 md:grid-cols-[1fr_1.25fr_1fr] gap-4 md:mt-12 mt-0 md:p-0 p-5'>
+        <div className='w-full md:h-[520px] grid grid-cols-1 md:grid-cols-[1fr_1.25fr_1fr] gap-4 md:mt-12 mt-0 p-3 md:p-0'>
 
           {/* Man 1 Container*/}
           <div className='md:h-full bg-[#E0E0E0] relative rounded-[10px] overflow-hidden hidden md:block'>
@@ -73,7 +29,7 @@ const page = () => {
           </div>
 
           {/* Middle Container */}
-          <div className='grid grid-rows-[150px_1fr_120px] grid-cols-1 gap-3 overflow-hidden'>
+          <div className='grid grid-rows-[104px_auto_88px] md:grid-rows-[150px_1fr_120px] grid-cols-1 gap-3 overflow-hidden'>
 
             {/* Group Girls Image */}
             <div className='w-full bg-[#E0E0E0] md:h-37.5 h-max rounded-[10px] relative overflow-hidden flex items-center justify-center'>
@@ -82,16 +38,16 @@ const page = () => {
 
             {/* Text Container */}
             <div className='w-full block'>
-              <h2 className='md:text-[91px] text-[45px] text-[#484848] font-medium tracking-[-4%] text-center leading-[100%]'>
+              <h2 className='md:text-[91px] text-[39px] text-[#484848] font-medium tracking-[-4%] text-center leading-[100%]'>
                 ULTIMATE
               </h2>
               <h1
                 style={{ WebkitTextStroke: '1px #484848' }}
-                className='md:text-[187px] text-[100px] text-transparent font-medium tracking-[-5.5%] text-center leading-[100%]'>
+                className='md:text-[187px] text-[82px] text-transparent font-medium tracking-[-5.5%] text-center leading-[100%]'>
                 SALE
               </h1>
               <p
-                className='text-[20px] text-[#484848] font-normal tracking-[10%] text-center'>
+                className='md:text-[20px] text-[11px] text-[#484848] font-normal tracking-[10%] text-center'>
                 NEW COLLECTION
               </p>
               <Link href={"/fashion"}>
@@ -101,7 +57,7 @@ const page = () => {
 
             {/* Group Girls Image */}
             <div className='w-full h-37.5 rounded-[10px] relative overflow-hidden flex items-center justify-center'>
-              <Image src="/assets/Hero/girls2.png" width={100} height={100} alt='Girls 2' className='w-95.75 md:absolute bottom-0' unoptimized />
+              <Image src="/assets/Hero/girls2.png" width={100} height={100} alt='Girls 2' className='w-full h-full object-cover md:absolute bottom-0' unoptimized />
             </div>
 
           </div>
@@ -196,11 +152,11 @@ const page = () => {
           </div>
 
           {/* Grid */}
-          <div className='grid md:grid-cols-3 grid-cols-1 gap-15 w-full ml-auto mr-auto mt-12.5'>
+          <div className='grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-15 w-full ml-auto mr-auto mt-8 md:mt-12.5'>
 
             {
               newArivals.map(product => (
-                <div key={product.id} className='md:w-96.5 h-max w-60 bg-white shadow-[0_40px_90px_0_rgba(0,0,0,0.06)] rounded-[10px] md:px-6.25 px-3 pt-3.75 pb-5 md:pb-8.75 md:ml-0 md:mr-0 ml-auto mr-auto'>
+                <div key={product.id} className='md:w-96.5 h-max w-full bg-white shadow-[0_40px_90px_0_rgba(0,0,0,0.06)] rounded-[10px] md:px-6.25 px-3 pt-3.75 pb-5 md:pb-8.75 md:ml-0 md:mr-0 ml-auto mr-auto'>
                   <Image src={product.image} alt='' width={400} height={400} />
 
                   <div className='w-full h-max flex items-center justify-between mt-3'>
@@ -235,7 +191,7 @@ const page = () => {
                   {/* Price */}
                   <div className='w-full h-max flex items-center justify-between md:mt-6.25 mt-3'>
 
-                    <h2 className='md:text-[24px] text-[16px] font-medium tracking-[-1%] leading-0 text-[#484848]'>
+                    <h2 className='md:text-[24px] text-[14px] font-medium tracking-[-1%] leading-0 text-[#484848]'>
                       ${product.price}
                     </h2>
 
@@ -374,7 +330,6 @@ const page = () => {
 
       </footer>
 
-      </div>
     </div>
   )
 }
