@@ -47,7 +47,7 @@ const Banner = () => {
                                     "/assets/banner/icon3.png",
                                     "/assets/banner/icon4.png",
                                 ].map((image, index) => (
-                                    <Image key={index} width={400} height={400} alt='' src={image} className='md:w-50 w-30' />
+                                    <Image key={index} width={400} height={400} alt='FASCO service benefit' src={image} className='md:w-50 w-30' />
                                 ))
                             }
                         </div>
