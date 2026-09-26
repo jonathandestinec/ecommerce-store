@@ -8,10 +8,10 @@ const FollowUs = () => {
     return (
         <div>
             {/* Follow Us */}
-            <section className={cn('w-full h-max mt-25 ml-auto mr-auto ${poppins.className} antialiased bg-white py-13.75 flex items-center justify-center')}>
+            <section className={cn('w-full min-w-0 overflow-x-clip h-max mt-16 ml-auto mr-auto antialiased bg-white py-10 md:py-14 flex items-center justify-center')}>
 
                 {/* Inner */}
-                <div className='md:px-0 px-5'>
+                <div className='w-full min-w-0 overflow-x-clip md:px-0 px-5'>
                     <div className='grid grid-cols-1 gap-2 md:gap-5 w-full md:w-153.5 ml-auto mr-auto'>
                         <h1 className={`${volkhov.className} md:text-[48px] text-[30px] text-[#484848] text-center`}>Follow us On Instagram</h1>
                         <p className=' text-[14px] md:text-[16px] text-center text-[#8A8A8A]'>
@@ -19,7 +19,7 @@ const FollowUs = () => {
                         </p>
                     </div>
 
-                    <div className='w-full hidden md:flex items-center justify-between mt-10 md:mt-25 md:overflow-x-clip overflow-x-scroll'>
+                    <div className='w-screen relative left-1/2 -translate-x-1/2 hidden md:flex items-center justify-center mt-10 md:mt-16 overflow-hidden'>
                         {/* Images */}
                         {
                             [
@@ -31,13 +31,13 @@ const FollowUs = () => {
                                 "/assets/followus/6.png",
                                 "/assets/followus/7.png",
                             ].map((image, index) => (
-                                <Image key={index} src={image} width={400} height={400} alt='social image' className='' />
+                                <Image key={index} src={image} width={400} height={400} alt={`Fashion look ${index + 1} from Instagram`} className={`w-[14.2857vw] shrink-0 object-cover ${index % 2 === 0 ? 'h-[16.15vw]' : 'h-[19.9vw]'}`} />
                             ))
                         }
                     </div>
 
-                    <div className='w-full md:hidden flex items-center justify-between mt-10 md:mt-25 md:overflow-x-clip overflow-x-hidden'>
-                        <div className='flex items-center animate-marquee md:w-max w-full'>
+                    <div aria-label="Instagram fashion gallery" className='w-screen relative left-1/2 -translate-x-1/2 md:hidden flex items-center mt-8 overflow-x-auto hide-scrollbar snap-x snap-mandatory'>
+                        <div className='flex w-max items-center'>
                             {/* Images */}
                             {
                                 [
@@ -49,7 +49,7 @@ const FollowUs = () => {
                                     "/assets/followus/6.png",
                                     "/assets/followus/7.png",
                                 ].map((image, index) => (
-                                    <Image key={index} src={image} width={400} height={400} alt='social image' className='' />
+                                    <Image key={index} src={image} width={200} height={240} alt={`Fashion look ${index + 1} from Instagram`} className={`w-32 shrink-0 snap-center object-cover ${index % 2 === 0 ? 'h-32' : 'h-40'}`} />
                                 ))
                             }
                         </div>
@@ -58,19 +58,6 @@ const FollowUs = () => {
                 </div>
             </section>
 
-            <style jsx>{`
-                @keyframes marquee {
-                    from {
-                        transform: translateX(0);
-                    }
-                    to {
-                        transform: translateX(-50%);
-                    }
-                }
-                .animate-marquee {
-                    animation: marquee 20s linear infinite;
-                }
-            `}</style>
         </div>
     )
 }

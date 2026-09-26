@@ -3,20 +3,23 @@ import React from 'react'
 import Button from './button'
 import { volkhov } from '@/styles/fonts'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
 
 const Banner = () => {
     return (
         <div>
             {/* Banner Section */}
-            <section className={cn('w-full h-max md:mt-25 mt-10 ml-auto mr-auto ${poppins.className} antialiased bg-white py-13.75 flex items-center justify-center')}>
+            <section id="banner" className={cn('w-full h-max md:mt-16 mt-10 ml-auto mr-auto antialiased bg-white py-8 md:py-0 flex items-center justify-center')}>
 
                 {/* Inner */}
                 <div className='w-full'>
-                    <div className='grid md:grid-cols-2 grid-cols-1 gap-7.5 w-full ml-auto mr-auto bg-[#DADADA]'>
-                        <Image src={"/assets/banner/banner.png"} width={700} height={700} alt='Banner' className='w-full h-full' />
+                    <div className='grid md:grid-cols-[1fr_1fr] grid-cols-1 gap-0 w-full ml-auto mr-auto bg-[#DADADA]'>
+                        <div className="relative min-h-[300px] md:min-h-[420px]">
+                            <Image src={"/assets/banner/banner.png"} fill sizes="(max-width: 768px) 100vw, 50vw" alt='Model presenting the featured collection' className='object-cover object-center' />
+                        </div>
 
                         {/* Copy */}
-                        <div className='md:py-15 md:pt-15 pt-6 py-10 md:px-0 px-5'>
+                        <div className='md:py-12 md:pt-12 pt-6 py-10 md:px-10 lg:px-16 px-5'>
                             <h5 className='text-[#767676] text-[14px] md:text-[16px]'>Women Collection</h5>
                             <h4 className={cn('text-[#484848] text-[30px] md:text-[48px] md:mt-5 mt-2', volkhov.className)}>
                                 Peaky Blinders
@@ -33,7 +36,7 @@ const Banner = () => {
 
                             <p className='text-[#000000] md:mt-5 mt-2 md:w-128.75 md:text-[28px] text-[18px] font-medium'>$100.<span className='text-[16px] md:text-[24px]'>00</span></p>
 
-                            <Button text='Buy Now' className='md:mt-5 mt-2 md:px-15.5 px-8' />
+                            <Link href="/fashion" className="mt-3 flex md:mt-5"><Button text='Buy Now' className='md:px-15.5 px-8' /></Link>
                         </div>
                     </div>
 

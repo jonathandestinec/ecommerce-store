@@ -1,61 +1,116 @@
-"use client"
+'use client'
 
-import { productLayouts } from '@/data/product-layouts'
-import { cn } from '@/lib/utils'
-import { volkhov } from '@/styles/fonts'
-import React, { useState } from 'react'
-import ProductCard from './product-card'
+import { useMemo, useState } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { products } from '@/data/products'
+import ProductCard from './product-card'
 
-const ProductGrid = () => {
-
-    const [productGridLayout, setProductGridLayout] = useState("")
-
-    const handleChangeLayout = (name: string, __class: string) => {
-        console.log("here")
-        setProductGridLayout(__class)
-    }
-
-    return (
-        <div className='col-span-7 w-full h-full'>
-
-            {/* Top Tab */}
-            <div className='flex items-center justify-between w-full md:mt-0 mt-10'>
-                <div className='flex items-center justify-between gap-0.75 w-max'>
-                    <h3 className={cn('md:text-[16px] text-[14px] text-black', volkhov.className)}>
-                        Best Selling
-                    </h3>
-
-                    <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6.86445 0.364453L6.55508 0.0550781C6.48164 -0.0183594 6.36289 -0.0183594 6.28945 0.0550781L3.45977 2.87852L0.630078 0.0550781C0.556641 -0.0183594 0.437891 -0.0183594 0.364453 0.0550781L0.0550781 0.364453C-0.0183594 0.437891 -0.0183594 0.556641 0.0550781 0.630078L3.32695 3.90195C3.40039 3.97539 3.51914 3.97539 3.59258 3.90195L6.86445 0.630078C6.93789 0.556641 6.93789 0.437891 6.86445 0.364453Z" fill="black" />
-                    </svg>
-                </div>
-
-                <div className='hidden md:flex items-center justify-between gap-2.5'>
-                    {
-                        productLayouts.map((productLayout, index) => (
-                            <div key={index} className={cn('size-8.5 bg-[#F2F2F2] flex items-center justify-center cursor-pointer')} onClick={() => {
-                                handleChangeLayout(productLayout.layoutName, productLayout.__class)
-                            }}>
-                                {productLayout.layoutIcon}
-                            </div>
-                        ))
-                    }
-                </div>
-            </div>
-
-            <div className={cn('w-full ml-auto mr-auto grid md:grid-cols-2 gap-2 place-items-center mt-7.5', productGridLayout, "grid-cols-1")}>
-                {
-                    products.map((product, index) => (
-                        <div key={index} className='w-full'>
-                            <ProductCard product={product}/>
-                        </div>
-                    ))
-                }
-            </div>
-
-        </div>
-    )
+const colors = ['#ff6c6c', '#ff7629', '#fff06c', '#9bff6c', '#6cff9e', '#6cffdc', '#6cb9ff', '#6cf6ff', '#6ca7ff', '#6c7bff', '#8a6cff', '#b66cff', '#fc6cff', '#ff6c6c']
+const columnClass: Record<number, string> = {
+  1: 'md:grid-cols-1',
+  2: 'md:grid-cols-2',
+  3: 'md:grid-cols-3',
+  4: 'md:grid-cols-4',
+  5: 'md:grid-cols-5',
 }
+const filterGroups = [
+  { title: 'Brands', items: ['Minimog', 'Retrolie', 'Brook', 'Learts', 'Vagabond', 'Abby'] },
+  { title: 'Collections', items: ['All products', 'Best sellers', 'New arrivals', 'Accessories'] },
+  { title: 'Tags', items: ['Fashion', 'Hats', 'Sandal', 'Belt', 'Bags', 'Sneakers', 'Denim', 'Sunglasses', 'Beachwear'] },
+]
 
-export default ProductGrid
+export default function ProductGrid() {
+  const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [priceRange, setPriceRange] = useState<string | null>(null)
+  const [sort, setSort] = useState('featured')
+  const [columns, setColumns] = useState(3)
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({ Brands: true, Collections: true, Tags: true })
+
+  const visibleProducts = useMemo(() => {
+    const filtered = products.filter((product) => {
+      const colorMatches = !selectedColor || product.colors?.includes(selectedColor)
+      const [minimum, maximum] = priceRange?.replaceAll('$', '').split('-').map(Number) ?? [0, Infinity]
+      const priceMatches = !priceRange || (product.price >= minimum && product.price <= maximum)
+      return colorMatches && priceMatches
+    })
+    if (sort === 'price-asc') return [...filtered].sort((a, b) => a.price - b.price)
+    if (sort === 'price-desc') return [...filtered].sort((a, b) => b.price - a.price)
+    return filtered
+  }, [selectedColor, priceRange, sort])
+
+  const priceOptions = ['$0-$50', '$50-$100', '$100-$150', '$150-$200', '$300-$400']
+
+  return (
+    <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-5 pb-16 pt-10 md:grid-cols-[210px_minmax(0,1fr)] md:gap-10 md:px-7 lg:grid-cols-[240px_minmax(0,1fr)]">
+      <aside aria-label="Product filters" className="grid content-start gap-4 md:gap-7">
+        <div className="hidden content-start gap-6 md:grid md:gap-7">
+        <h2 className="font-serif text-xl text-[#222]">Filters</h2>
+
+        <fieldset>
+          <legend className="mb-3 text-sm font-medium">Size</legend>
+          <div className="flex flex-wrap gap-2">
+            {['S', 'M', 'L', 'XL'].map((size) => <span key={size} className="grid size-8 place-items-center rounded border border-[#ddd] text-xs text-[#666]">{size}</span>)}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend className="mb-3 text-sm font-medium">Colors</legend>
+          <div className="grid max-w-[185px] grid-cols-7 gap-2">
+            {colors.map((color, index) => <button key={`${color}-${index}`} type="button" onClick={() => setSelectedColor(selectedColor === color ? null : color)} aria-label={`Filter by color ${color}`} aria-pressed={selectedColor === color} className={`grid size-5 place-items-center rounded-full ${selectedColor === color ? 'ring-1 ring-black ring-offset-2' : ''}`} style={{ backgroundColor: color }} />)}
+          </div>
+          {selectedColor && <button type="button" onClick={() => setSelectedColor(null)} className="mt-2 text-xs text-[#777] underline">Clear color</button>}
+        </fieldset>
+
+        <fieldset>
+          <legend className="mb-2 text-sm font-medium">Prices</legend>
+          <div className="grid gap-1.5">
+            {priceOptions.map((range) => <button key={range} type="button" aria-pressed={priceRange === range} onClick={() => setPriceRange(priceRange === range ? null : range)} className={`w-fit text-left text-xs transition hover:text-black ${priceRange === range ? 'font-semibold text-black' : 'text-[#888]'}`}>{range}</button>)}
+          </div>
+        </fieldset>
+
+        {filterGroups.map((group) => <section key={group.title} className="border-t border-[#eee] pt-4">
+          <button type="button" aria-expanded={expanded[group.title]} onClick={() => setExpanded((current) => ({ ...current, [group.title]: !current[group.title] }))} className="flex w-full items-center justify-between text-left text-sm font-medium">
+            {group.title}{expanded[group.title] ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+          </button>
+          {expanded[group.title] && <div className={`mt-3 ${group.title === 'Tags' ? 'flex flex-wrap gap-x-3 gap-y-2' : 'grid grid-cols-2 gap-y-2'}`}>
+            {group.items.map((item) => <span key={item} className="w-fit text-left text-xs text-[#888]">{item}</span>)}
+          </div>}
+        </section>)}
+        </div>
+
+        <details className="group border-y border-[#eee] py-3 md:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium">Filters<ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
+          <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-4 pb-2">
+            <fieldset><legend className="mb-2 text-xs font-medium">Colors</legend><div className="grid max-w-[150px] grid-cols-7 gap-2">{colors.map((color, index) => <button key={`${color}-${index}`} type="button" onClick={() => setSelectedColor(selectedColor === color ? null : color)} aria-label={`Filter by color ${color}`} aria-pressed={selectedColor === color} className={`size-4 rounded-full ${selectedColor === color ? 'ring-1 ring-black ring-offset-2' : ''}`} style={{ backgroundColor: color }} />)}</div></fieldset>
+            <fieldset><legend className="mb-2 text-xs font-medium">Prices</legend><div className="grid gap-1.5">{priceOptions.map((range) => <button key={range} type="button" aria-pressed={priceRange === range} onClick={() => setPriceRange(priceRange === range ? null : range)} className={`w-fit text-left text-xs ${priceRange === range ? 'font-semibold text-black' : 'text-[#888]'}`}>{range}</button>)}</div></fieldset>
+          </div>
+        </details>
+      </aside>
+
+      <section aria-label="Fashion products" className="min-w-0">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <label className="flex items-center gap-2 text-xs text-[#777]">
+            <span className="sr-only">Sort products</span>
+            <select value={sort} onChange={(event) => setSort(event.target.value)} className="rounded border border-transparent bg-transparent py-2 text-xs text-[#333] focus:border-[#ddd] focus:outline-none">
+              <option value="featured">Best selling</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option>
+            </select>
+          </label>
+          <div className="hidden items-center gap-2 sm:flex" aria-label="Product grid layout">
+            {[1, 2, 3, 4, 5].map((count) => <button key={count} type="button" onClick={() => setColumns(count)} aria-label={`${count} column${count === 1 ? '' : 's'} grid`} aria-pressed={columns === count} className={`grid size-9 place-items-center rounded transition ${columns === count ? 'bg-[#eee]' : 'hover:bg-[#f5f5f5]'}`}>
+              {count === 1 ? <span className="flex w-3.5 flex-col gap-[3px]" aria-hidden="true">{[0, 1, 2].map((line) => <span key={line} className="h-[2px] w-full bg-[#333]" />)}</span> : <span className="flex h-3.5 items-stretch gap-[2px]" aria-hidden="true">{Array.from({ length: count }, (_, index) => <span key={index} className="w-[2px] bg-[#333]" />)}</span>}
+            </button>)}
+          </div>
+        </div>
+
+        {visibleProducts.length > 0 ? <div className={`grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 ${columnClass[columns]}`}>
+          {visibleProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+        </div> : <div className="grid min-h-64 place-items-center text-center text-sm text-[#888]">No products match those filters.</div>}
+
+        <div className="mt-12 flex items-center justify-center gap-2" aria-label="Product pages">
+          <button type="button" aria-current="page" className="grid size-8 place-items-center rounded-full bg-[#f5f5f5] text-xs">1</button>
+          <span className="px-1 text-xs text-[#888]">Showing {visibleProducts.length} of {products.length} products</span>
+        </div>
+      </section>
+    </div>
+  )
+}

@@ -7,6 +7,7 @@ export interface NewArrivals {
     price: number | 95.50;
     saleStatus: "Almost Sold Out" | "Sold" | "Available";
     id: number;
+    category: "Men's Fashion" | "Women's Fashion" | "Women Accessories" | "Men Accessories" | "Discount Deals";
 }
 
 export interface Reviews {

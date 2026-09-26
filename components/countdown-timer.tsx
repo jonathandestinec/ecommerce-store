@@ -67,13 +67,13 @@ export default function Countdown(): JSX.Element {
   return (
     <>
       {units.map((unit) => (
-        <div key={unit.label} className='md:scale-100 scale-[65%]'>
+        <div key={unit.label} className='min-w-0'>
           <div
-            className={`w-19 h-19 text-center text-[32px] shadow-[0_4px_14px_1px_rgba(0,0,0,0.16)] text-[#484848] rounded-[10px] flex items-center justify-center ${digitalNumbers.className}`}
+            className={`w-14 h-14 md:w-16 md:h-16 lg:w-[72px] lg:h-[72px] text-center text-xl md:text-2xl shadow-[0_4px_14px_1px_rgba(0,0,0,0.12)] text-[#484848] rounded-lg flex items-center justify-center ${digitalNumbers.className}`}
           >
             {pad(unit.value)}
           </div>
-          <p className='text-[24px] mt-3.75 text-center text-[#484848]'>{unit.label}</p>
+          <p className='text-xs md:text-sm mt-2 text-center text-[#484848]'>{unit.label}</p>
         </div>
       ))}
     </>

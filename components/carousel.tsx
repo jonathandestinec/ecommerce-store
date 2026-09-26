@@ -1,163 +1,40 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react'
+import Image from 'next/image'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-const carouselImages: string[] = [
-  '/assets/deals/woman1.png',
-  '/assets/deals/woman2.png',
-  '/assets/deals/woman3.png',
-];
-
-type Direction = 'next' | 'prev';
+const slides = ['/assets/deals/woman1.png', '/assets/deals/woman2.png', '/assets/deals/woman3.png']
 
 export default function DealsCarousel() {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [direction, setDirection] = useState<Direction>('next');
-
-  const length: number = carouselImages.length;
-
-  // Returns the image that belongs in a slot `offset` positions after the current one
-  const getSlotImage = (offset: number): string => {
-    const index: number = (currentIndex + offset + length) % length;
-    return carouselImages[index];
-  };
-
-  const goToPrev = (): void => {
-    setDirection('prev');
-    setCurrentIndex((prev) => (prev === 0 ? length - 1 : prev - 1));
-  };
-
-  const goToNext = (): void => {
-    setDirection('next');
-    setCurrentIndex((prev) => (prev === length - 1 ? 0 : prev + 1));
-  };
+  const [active, setActive] = useState(0)
+  const [direction, setDirection] = useState<'next' | 'prev'>('next')
+  const move = (step: number) => {
+    setDirection(step > 0 ? 'next' : 'prev')
+    setActive((index) => (index + step + slides.length) % slides.length)
+  }
 
   return (
-    <div className='w-full md:w-333 relative md:flex items-center justify-start block gap-6 md:ml-0 md:mr-0 ml-auto mr-auto'>
-
-      {/* Control Buttons */}
-      <div className='bottom-0 w-max flex flex-col items-center justify-end md:h-full h-max md:mb-0 mb-3'>
-        <div className=' flex items-center justify-between md:gap-4 gap-2'>
-          {/* Left control Button */}
-          <div
-            onClick={goToPrev}
-            className='md:size-12 size-10 shadow-[0_4px_14px_1px_rgba(0,0,0,0.16)] text-[#484848] rounded-full flex items-center justify-center cursor-pointer'
-          >
-            <ChevronLeft className=' text-[#B6B6B6]' />
-          </div>
-
-          {/* Right control Button */}
-          <div
-            onClick={goToNext}
-            className='md:size-12 size-10 shadow-[0_4px_14px_1px_rgba(0,0,0,0.16)] text-[#484848] rounded-full flex items-center justify-center cursor-pointer'
-          >
-            <ChevronRight className=' text-black' />
+    <div className="grid min-w-0 grid-cols-1 gap-3 md:w-[calc(100%+320px)] md:grid-cols-[auto_1fr] md:items-end md:gap-5 lg:w-[calc(100%+380px)] 2xl:w-[calc(100%+430px)]">
+      <div className="order-2 flex justify-center gap-3 md:order-1 md:pb-0">
+        <button type="button" onClick={() => move(-1)} aria-label="Previous deal" className="grid size-10 place-items-center rounded-full bg-white text-[#777] shadow-md transition hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-black md:size-12"><ChevronLeft /></button>
+        <button type="button" onClick={() => move(1)} aria-label="Next deal" className="grid size-10 place-items-center rounded-full bg-white text-black shadow-md transition hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-black md:size-12"><ChevronRight /></button>
+      </div>
+      <div className="order-1 min-w-0 md:order-2">
+        <div className="grid h-[330px] grid-cols-[1.08fr_.92fr] grid-rows-[84%_16%] gap-x-3 overflow-hidden sm:h-[390px] md:h-[min(32vw,580px)] md:grid-cols-[1fr_.92fr_.92fr] md:gap-x-4">
+          {[0, 1, 2].map((offset) => {
+            const index = (active + offset) % slides.length
+            const placement = offset === 0 ? 'col-start-1 row-start-1 row-span-2 h-full' : offset === 1 ? 'col-start-2 row-start-1 h-full' : 'col-start-3 row-start-1 h-full'
+            return <button key={`${active}-${offset}`} type="button" onClick={() => { setDirection(offset === 0 ? direction : 'next'); setActive(index) }} aria-label={`Show deal ${index + 1}`} aria-current={offset === 0} className={`group relative min-w-0 overflow-hidden bg-[#eee] text-left ${placement} ${offset === 2 ? 'hidden md:block' : ''}`}>
+              <Image key={`${index}-${direction}`} src={slides[index]} alt={`Spring collection look ${index + 1}`} fill sizes="(max-width: 768px) 45vw, 240px" className={`object-cover object-top transition duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.025] ${direction === 'next' ? 'animate-[deal-enter-right_.5s_ease_both]' : 'animate-[deal-enter-left_.5s_ease_both]'}`} />
+              {offset === 0 && <span className="absolute bottom-3 left-3 bg-white px-3 py-2 text-left shadow-sm sm:bottom-4 sm:left-4 sm:px-4 sm:py-3"><span className="flex items-center gap-2 text-[9px] text-[#777] sm:text-xs">{String(index + 1).padStart(2, '0')} <span className="h-px w-5 bg-[#777]" /> Spring Sale</span><span className="mt-1 block text-base text-[#484848] sm:text-xl">30% OFF</span></span>}
+            </button>
+          })}
+          <div className="col-start-2 row-start-2 flex items-center justify-start gap-2 md:col-span-2 md:gap-3" role="tablist" aria-label="Choose a deal">
+            {slides.map((_, index) => <button key={index} type="button" role="tab" aria-label={`Deal ${index + 1}`} aria-selected={index === active} onClick={() => { setDirection(index > active ? 'next' : 'prev'); setActive(index) }} className={`grid size-5 place-items-center rounded-full ${index === active ? 'border border-black' : ''}`}><span className={`size-2 rounded-full ${index === active ? 'bg-black' : 'bg-[#b6b6b6]'}`} /></button>)}
           </div>
         </div>
       </div>
-
-      {/* carousel Images */}
-      <div className=' w-full md:h-125 h-70 grid grid-flow-col md:auto-cols-87.5 auto-cols-max min-w-0 grid-rows-6 md:gap-6 gap-3 scrollbar-none relative overflow-hidden'>
-
-        {/* Slot 0 — large card */}
-        <div className='relative row-span-6 flex items-center justify-center overflow-clip md:w-full w-max'>
-          <Image
-            key={`slot0-${currentIndex}`}
-            src={getSlotImage(0)}
-            alt={`slide ${currentIndex + 1}`}
-            className={`md:w-max w-auto h-full ${direction === 'next' ? 'animate-slide-in-right' : 'animate-slide-in-left'}`}
-            width={400}
-            height={500}
-          />
-        </div>
-
-        {/* Slot 1 */}
-        <div className='row-span-5 overflow-clip'>
-          <Image
-            key={`slot1-${currentIndex}`}
-            src={getSlotImage(1)}
-            alt={`slide ${((currentIndex + 1) % length) + 1}`}
-            className={`md:w-max w-auto h-full ${direction === 'next' ? 'animate-slide-in-right' : 'animate-slide-in-left'}`}
-            width={400}
-            height={500}
-          />
-        </div>
-
-        {/* Slot 2 */}
-        <div className='row-span-5 overflow-clip'>
-          <Image
-            key={`slot2-${currentIndex}`}
-            src={getSlotImage(2)}
-            alt={`slide ${((currentIndex + 2) % length) + 1}`}
-            className={`md:w-max w-auto h-full ${direction === 'next' ? 'animate-slide-in-right' : 'animate-slide-in-left'}`}
-            width={400}
-            height={500}
-          />
-        </div>
-
-        <div className='row-span-5 overflow-clip'></div>
-
-        {/* Discount Card */}
-        <div className='absolute bottom-0 left-0 md:w-54.25 w-34 md:h-32.5 h-20 bg-white ml-6 mb-6 flex items-center justify-center md:p-0 p-5'>
-          <div className=''>
-            <div className=' md:flex md:flex-row flex-col items-center justify-between gap-3'>
-              <h5 className=' md:text-[16px] text-[12px]'>{String(currentIndex + 1).padStart(2, '0')}</h5>
-              <svg width="27" height="1" viewBox="0 0 27 1" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0.5H27" stroke="#484848" />
-              </svg>
-              <h5 className=' md:text-[16px] text-[12px]'>Spring Sale</h5>
-            </div>
-            <h3 className='md:text-[28px] text-[18px]'>30% OFF</h3>
-          </div>
-        </div>
-
-        {/* Indicators */}
-        <div className='col-start-2 row-start-6 col-span-1 row-span-1 w-max md:gap-5 gap-2 h-7.5 self-end flex items-end justify-between absolute z-10'>
-          {carouselImages.map((_, i) => (
-            <div
-              key={i}
-              onClick={() => {
-                setDirection(i > currentIndex ? 'next' : 'prev');
-                setCurrentIndex(i);
-              }}
-              className={`md:w-6.75 md:h-6.75 size-3 rounded-full ring-black flex items-center justify-center cursor-pointer ${i === currentIndex ? 'border' : 'border-0'}`}
-            >
-              <div className={`md:w-2.75 md:h-2.75 size-1.5 rounded-full ${i === currentIndex ? 'bg-black' : 'bg-[#B6B6B6]'}`} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes slideInRight {
-          from {
-            transform: translateX(24px);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-        @keyframes slideInLeft {
-          from {
-            transform: translateX(-24px);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-        :global(.animate-slide-in-right) {
-          animation: slideInRight 0.35s ease-out;
-        }
-        :global(.animate-slide-in-left) {
-          animation: slideInLeft 0.35s ease-out;
-        }
-      `}</style>
     </div>
-  );
+  )
 }
