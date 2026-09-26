@@ -8,7 +8,7 @@ import { newArivals } from '@/data/new-arrivals'
 import { customerReviews } from '@/data/reviews'
 import { formatNumber } from '@/lib/functions'
 import { cn } from '@/lib/utils'
-import { digitalNumbers, poppins, volkhov } from '@/styles/fonts'
+import { poppins, volkhov } from '@/styles/fonts'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -19,22 +19,22 @@ const page = () => {
     <div className=' w-full'>
 
       {/* Header */}
-      <section className={` w-full max-w-7xl h-max md:mt-17.5 ml-auto mr-auto ${poppins.className} antialiased`}>
+      <section className={`w-full max-w-[1030px] h-max md:mt-8 ml-auto mr-auto ${poppins.className} antialiased`}>
 
         {/* Whole Content Container */}
-        <div className='w-full md:h-189 grid grid-cols-1 md:grid-cols-3 gap-8.75 md:mt-23.5 mt-0 md:p-0 p-5'>
+        <div className='w-full md:h-[520px] grid grid-cols-1 md:grid-cols-[1fr_1.25fr_1fr] gap-4 md:mt-12 mt-0 md:p-0 p-5'>
 
           {/* Man 1 Container*/}
           <div className='md:h-full bg-[#E0E0E0] relative rounded-[10px] overflow-hidden hidden md:block'>
-            <Image src={`/assets/Hero/man2.png?v=${Date.now()}`} width={100} height={100} className='md:w-98 w-50 md:absolute md:bottom-0' alt='Man 2' unoptimized />
+            <Image src="/assets/Hero/man2.png" width={100} height={100} className='w-auto max-w-none h-[95%] md:absolute md:bottom-0' alt='Man 2' unoptimized />
           </div>
 
           {/* Middle Container */}
-          <div className='grid grid-cols-1 gap-9'>
+          <div className='grid grid-rows-[150px_1fr_120px] grid-cols-1 gap-3 overflow-hidden'>
 
             {/* Group Girls Image */}
             <div className='w-full bg-[#E0E0E0] md:h-37.5 h-max rounded-[10px] relative overflow-hidden flex items-center justify-center'>
-              <Image src={`/assets/Hero/girls1.png?v=${Date.now()}`} width={100} height={100} alt='Girls 1' className='w-95.75 h-max md:absolute bottom-0' unoptimized />
+              <Image src="/assets/Hero/girls1.png" width={100} height={100} alt='Girls 1' className='w-full h-full object-cover md:absolute bottom-0' unoptimized />
             </div>
 
             {/* Text Container */}
@@ -58,14 +58,14 @@ const page = () => {
 
             {/* Group Girls Image */}
             <div className='w-full h-37.5 rounded-[10px] relative overflow-hidden flex items-center justify-center'>
-              <Image src={`/assets/Hero/girls2.png?v=${Date.now()}`} width={100} height={100} alt='Girls 2' className='w-95.75 md:absolute bottom-0' unoptimized />
+              <Image src="/assets/Hero/girls2.png" width={100} height={100} alt='Girls 2' className='w-95.75 md:absolute bottom-0' unoptimized />
             </div>
 
           </div>
 
           {/* Man 2 Container*/}
           <div className='md:h-full bg-[#E0E0E0] relative rounded-[10px] overflow-hidden md:flex hidden items-center justify-center'>
-            <Image src={`/assets/Hero/man1.png?v=${Date.now()}`} width={100} height={100} className='md:w-62.25 absolute bottom-0' alt='Man 1' unoptimized />
+            <Image src="/assets/Hero/man1.png" width={100} height={100} className='w-auto h-[95%] max-w-none absolute bottom-0' alt='Man 1' unoptimized />
           </div>
 
         </div>

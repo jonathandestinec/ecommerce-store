@@ -1,17 +1,16 @@
 "use client"
 
 import { volkhov } from '@/styles/fonts'
-import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import Button from './button';
 import { NavLinks } from '@/types';
-import { MenuIcon, PersonStanding, Search, ShoppingBag, Star, User } from 'lucide-react';
+import { MenuIcon, Search, ShoppingBag, Star, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 const MobileNav = () => {
-
+    const [open, setOpen] = useState(false)
     const pathname = usePathname()
 
     const links: NavLinks[] = pathname !== "/" ? [
@@ -31,14 +30,22 @@ const MobileNav = () => {
     ]
 
     return (
-        <div className=' md:hidden flex  items-center justify-between p-5'>
+        <div className='relative md:hidden flex items-center justify-between p-5'>
             {/* Logo */}
             <h1 className={`text-[32px] text-[#484848] ${volkhov.className}`}>
                 FASCO
             </h1>
 
-            {/* Hamburger */}
-            <MenuIcon />
+            <button type='button' aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} onClick={() => setOpen((value) => !value)} className='rounded-full p-2 transition hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black'>
+                <MenuIcon aria-hidden='true' />
+            </button>
+            {open && (
+                <nav aria-label='Mobile navigation' className='absolute inset-x-5 top-20 z-20 rounded-2xl bg-white p-5 shadow-xl'>
+                    <ul className='flex flex-col gap-4 text-sm'>
+                        {links.map((link) => <li key={link.url}><Link onClick={() => setOpen(false)} href={link.url} className='block py-1'>{link.text}</Link></li>)}
+                    </ul>
+                </nav>
+            )}
         </div>
     )
 }

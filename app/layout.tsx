@@ -15,7 +15,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${poppins.className} ${volkhov.className} antialiased h-full`}
     >
       <body className="min-h-full flex flex-col">
-        <div className="w-full max-w-7xl h-max md:mt-17.5 ml-auto mr-auto">
+        <div className="w-full max-w-[1030px] h-max px-5 md:px-0 md:mt-8 ml-auto mr-auto">
           <Nav />
         </div>
         {children}
