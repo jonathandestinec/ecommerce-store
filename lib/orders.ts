@@ -42,6 +42,7 @@ export type NewOrderItem = Omit<OrderItemRecord, 'id' | 'order_id'>
 export async function createOrder(order: NewOrder, items: NewOrderItem[]) {
   const admin = createAdminClient()
   const { data: created, error } = await admin.from('orders').insert(order).select('*').single()
+  if (error?.code === 'PGRST205') throw new Error('Order storage tables are missing. Run supabase/migrations/202609270001_orders.sql in your Supabase SQL Editor, then try again.')
   if (error) throw new Error('Could not save the order before payment.')
 
   const { error: itemError } = await admin.from('order_items').insert(items.map((item) => ({ ...item, order_id: created.id })))
