@@ -88,7 +88,7 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
       <div className="relative min-h-57.5 overflow-hidden sm:min-h-75 md:min-h-full">
         <Image src={image} alt="FASCO fashion model" fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-center" />
       </div>
-      <div className="relative flex min-h-[520px] flex-col items-center px-7 py-8 sm:px-12 md:min-h-0 md:px-[13%] md:py-10 lg:px-[15%]">
+      <div className="relative flex min-h-130 flex-col items-center px-7 py-8 sm:px-12 md:min-h-0 md:px-[13%] md:py-10 lg:px-[15%]">
         <Link href="/" className={`${volkhov.className} text-[32px] text-[#484848] md:text-[38px]`}>FASCO</Link>
         <div className="my-auto w-full max-w-[440px] py-8">
           <h1 className={`${volkhov.className} mb-5 text-lg text-black`}>{title}</h1>
