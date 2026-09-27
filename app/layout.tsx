@@ -18,8 +18,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${poppins.className} ${volkhov.className} antialiased h-full`}
     >
-      <Analytics />
       <body className="min-h-full flex flex-col">
+      <Analytics />
         <StoreProvider>
           <div className="w-full max-w-7xl h-max mx-auto">
             <Nav />
