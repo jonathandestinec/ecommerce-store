@@ -18,7 +18,7 @@ const page = () => {
       <section className={`relative w-full h-max md:mt-10 ${poppins.className} antialiased md:shadow-[0_24px_48px_-24px_rgba(68,68,68,0.18)]`}>
 
         {/* Whole Content Container */}
-        <div className='mx-auto w-full max-w-5xl md:h-[600px] grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 md:mt-10 mt-0 p-5 md:p-0'>
+        <div className='mx-auto w-full max-w-5xl md:h-150 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 md:mt-10 mt-0 p-5 md:p-0'>
 
           {/* Man 1 Container*/}
           <div className='col-start-1 row-start-1 h-40 md:col-auto md:row-auto md:h-full bg-[#E0E0E0] relative rounded-lg md:rounded-[10px] overflow-hidden md:block'>
