@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { products } from '@/data/products'
 import ProductCard from './product-card'
+import { formatNaira } from '@/lib/currency'
 
 const colors = ['#ff6c6c', '#ff7629', '#fff06c', '#9bff6c', '#6cff9e', '#6cffdc', '#6cb9ff', '#6cf6ff', '#6ca7ff', '#6c7bff', '#8a6cff', '#b66cff', '#fc6cff', '#ff6c6c']
 const columnClass: Record<number, string> = {
@@ -29,7 +30,7 @@ export default function ProductGrid() {
   const visibleProducts = useMemo(() => {
     const filtered = products.filter((product) => {
       const colorMatches = !selectedColor || product.colors?.includes(selectedColor)
-      const [minimum, maximum] = priceRange?.replaceAll('$', '').split('-').map(Number) ?? [0, Infinity]
+      const [minimum, maximum] = priceRange?.split('-').map(Number) ?? [0, Infinity]
       const priceMatches = !priceRange || (product.price >= minimum && product.price <= maximum)
       return colorMatches && priceMatches
     })
@@ -38,7 +39,13 @@ export default function ProductGrid() {
     return filtered
   }, [selectedColor, priceRange, sort])
 
-  const priceOptions = ['$0-$50', '$50-$100', '$100-$150', '$150-$200', '$300-$400']
+  const priceOptions = [
+    { bounds: '0-66451', label: `Under ${formatNaira(66451)}` },
+    { bounds: '66451-132901', label: `${formatNaira(66451)}–${formatNaira(132901)}` },
+    { bounds: '132901-199352', label: `${formatNaira(132901)}–${formatNaira(199352)}` },
+    { bounds: '199352-265803', label: `${formatNaira(199352)}–${formatNaira(265803)}` },
+    { bounds: '398704-531606', label: `${formatNaira(398704)}–${formatNaira(531606)}` },
+  ]
 
   return (
     <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-5 pb-16 pt-10 md:grid-cols-[210px_minmax(0,1fr)] md:gap-10 md:px-7 lg:grid-cols-[240px_minmax(0,1fr)]">
@@ -64,7 +71,7 @@ export default function ProductGrid() {
         <fieldset>
           <legend className="mb-2 text-sm font-medium">Prices</legend>
           <div className="grid gap-1.5">
-            {priceOptions.map((range) => <button key={range} type="button" aria-pressed={priceRange === range} onClick={() => setPriceRange(priceRange === range ? null : range)} className={`w-fit text-left text-xs transition hover:text-black ${priceRange === range ? 'font-semibold text-black' : 'text-[#888]'}`}>{range}</button>)}
+            {priceOptions.map(({ bounds, label }) => <button key={bounds} type="button" aria-pressed={priceRange === bounds} onClick={() => setPriceRange(priceRange === bounds ? null : bounds)} className={`w-fit text-left text-xs transition hover:text-black ${priceRange === bounds ? 'font-semibold text-black' : 'text-[#888]'}`}>{label}</button>)}
           </div>
         </fieldset>
 
@@ -82,7 +89,7 @@ export default function ProductGrid() {
           <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium">Filters<ChevronDown className="size-4 transition-transform group-open:rotate-180" /></summary>
           <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-4 pb-2">
             <fieldset><legend className="mb-2 text-xs font-medium">Colors</legend><div className="grid max-w-[150px] grid-cols-7 gap-2">{colors.map((color, index) => <button key={`${color}-${index}`} type="button" onClick={() => setSelectedColor(selectedColor === color ? null : color)} aria-label={`Filter by color ${color}`} aria-pressed={selectedColor === color} className={`size-4 rounded-full ${selectedColor === color ? 'ring-1 ring-black ring-offset-2' : ''}`} style={{ backgroundColor: color }} />)}</div></fieldset>
-            <fieldset><legend className="mb-2 text-xs font-medium">Prices</legend><div className="grid gap-1.5">{priceOptions.map((range) => <button key={range} type="button" aria-pressed={priceRange === range} onClick={() => setPriceRange(priceRange === range ? null : range)} className={`w-fit text-left text-xs ${priceRange === range ? 'font-semibold text-black' : 'text-[#888]'}`}>{range}</button>)}</div></fieldset>
+            <fieldset><legend className="mb-2 text-xs font-medium">Prices</legend><div className="grid gap-1.5">{priceOptions.map(({ bounds, label }) => <button key={bounds} type="button" aria-pressed={priceRange === bounds} onClick={() => setPriceRange(priceRange === bounds ? null : bounds)} className={`w-fit text-left text-xs ${priceRange === bounds ? 'font-semibold text-black' : 'text-[#888]'}`}>{label}</button>)}</div></fieldset>
           </div>
         </details>
       </aside>

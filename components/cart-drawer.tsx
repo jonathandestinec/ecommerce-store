@@ -4,9 +4,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Minus, Plus, X } from 'lucide-react'
 import { useStore } from './store-provider'
+import { formatNaira, FREE_SHIPPING_THRESHOLD } from '@/lib/currency'
 
-const freeShippingAt = 150
-const money = (value: number) => `$${value.toFixed(2)}`
+const freeShippingAt = FREE_SHIPPING_THRESHOLD
+const money = formatNaira
 
 export default function CartDrawer() {
   const { cart, cartCount, subtotal, cartOpen, closeCart, setQuantity, removeFromCart } = useStore()

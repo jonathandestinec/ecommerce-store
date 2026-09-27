@@ -7,9 +7,10 @@ import { ArrowDownUp, ChevronDown, Eye, Heart, Share2, Truck } from 'lucide-reac
 import type { Product } from '@/types'
 import { products } from '@/data/products'
 import { useStore } from './store-provider'
+import { formatNaira, FREE_SHIPPING_THRESHOLD } from '@/lib/currency'
 
 const sizes = ['M', 'L', 'XL', 'XXL']
-const money = (value: number) => `$${value.toFixed(2)}`
+const money = formatNaira
 
 export default function ProductDetail({ product }: { product: Product }) {
   const { addToCart, openCart } = useStore()
@@ -25,6 +26,7 @@ export default function ProductDetail({ product }: { product: Product }) {
   const discountPercent = product.discount ? Math.round((product.discount / regularPrice) * 100) : 0
   const colorNames: Record<string, string> = { '#8db4d2': 'Blue', '#000000': 'Black', '#ffd1dc': 'Pink', '#d0d5dd': 'White', '#d1e9cf': 'Green', '#1d3557': 'Navy', '#d8b4e2': 'Lilac', '#ffd700': 'Gold' }
   const colorName = colorNames[selectedColor.toLowerCase()] ?? 'Selected'
+  const soldOut = product.saleStatus === 'Sold'
 
   return (
     <main className="mx-auto w-full max-w-7xl px-5 pb-14 pt-8 md:px-7 md:pt-12">
@@ -50,19 +52,19 @@ export default function ProductDetail({ product }: { product: Product }) {
 
           <p className="mt-5 flex items-center gap-2 text-xs text-[#888]"><Eye className="size-4 text-black" /> 24 people are viewing this right now</p>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-md border border-[#f5cccc] bg-[#fff5f5] px-3 py-3 text-xs text-[#df5555]"><span>Hurry up! Sale ends in:</span><span className="font-mono font-semibold tracking-[.2em]">00 : 05 : 59 : 47</span></div>
-          <div className="mt-5"><p className="text-xs text-[#777]">Only <strong className="text-[#222]">9 item(s)</strong> left in stock!</p><div className="mt-2 h-1 overflow-hidden rounded-full bg-[#ddd]"><div className="h-full w-[18%] bg-[#ed5555]" /></div></div>
+          <div className="mt-5">{soldOut ? <p className="text-sm font-medium text-[#b42318]">Sold out</p> : <><p className="text-xs text-[#777]">Only <strong className="text-[#222]">9 item(s)</strong> left in stock!</p><div className="mt-2 h-1 overflow-hidden rounded-full bg-[#ddd]"><div className="h-full w-[18%] bg-[#ed5555]" /></div></>}</div>
 
           <fieldset className="mt-6"><legend className="text-sm font-semibold">Size: {selectedSize}</legend><div className="mt-3 flex gap-2">{sizes.map((size) => <button key={size} type="button" onClick={() => setSelectedSize(size)} aria-pressed={selectedSize === size} className={`grid h-10 min-w-10 place-items-center rounded border px-3 text-xs ${selectedSize === size ? 'border-black bg-black text-white' : 'border-[#ddd] hover:border-black'}`}>{size}</button>)}</div></fieldset>
 
           <fieldset className="mt-5"><legend className="text-sm font-semibold">Color: <span className="font-normal text-[#777]">{colorName}</span></legend><div className="mt-3 flex gap-2.5">{(product.colors?.length ? product.colors : ['#8db4d2', '#000000', '#ffd1dc']).slice(0, 3).map((color, index) => <button key={`${color}-${index}`} type="button" onClick={() => setSelectedColor(color)} aria-label={`Select color ${colorNames[color.toLowerCase()] ?? index + 1}`} aria-pressed={selectedColor === color} className={`grid size-7 place-items-center rounded-full ${selectedColor === color ? 'ring-1 ring-black ring-offset-2' : ''}`} style={{ backgroundColor: color }} />)}</div></fieldset>
 
           <div className="mt-6 grid grid-cols-[112px_1fr] gap-3">
-            <div className="flex h-11 items-center justify-between border border-[#ddd] px-2"><button type="button" aria-label="Decrease quantity" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid size-7 place-items-center text-[#777]">−</button><span aria-live="polite" className="text-sm">{quantity}</span><button type="button" aria-label="Increase quantity" onClick={() => setQuantity((value) => value + 1)} className="grid size-7 place-items-center text-[#777]">+</button></div>
-            <button type="button" onClick={() => { addToCart(product, quantity, selectedSize, selectedColor); setAdded(true); openCart() }} className="h-11 rounded border border-black bg-black px-4 text-sm text-white transition hover:bg-[#333]">{added ? 'Added to cart' : 'Add to cart'}</button>
+            <div className={`flex h-11 items-center justify-between border border-[#ddd] px-2 ${soldOut ? 'opacity-50' : ''}`}><button type="button" disabled={soldOut} aria-label="Decrease quantity" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid size-7 place-items-center text-[#777] disabled:cursor-not-allowed">−</button><span aria-live="polite" className="text-sm">{quantity}</span><button type="button" disabled={soldOut} aria-label="Increase quantity" onClick={() => setQuantity((value) => value + 1)} className="grid size-7 place-items-center text-[#777] disabled:cursor-not-allowed">+</button></div>
+            <button type="button" disabled={soldOut} onClick={() => { addToCart(product, quantity, selectedSize, selectedColor); setAdded(true); openCart() }} className="h-11 rounded border border-black bg-black px-4 text-sm text-white transition hover:bg-[#333] disabled:cursor-not-allowed disabled:border-[#aaa] disabled:bg-[#aaa]">{soldOut ? 'Sold out' : added ? 'Added to cart' : 'Add to cart'}</button>
           </div>
           <div className="mt-4 flex flex-wrap gap-6 border-b border-[#eee] py-4 text-xs text-[#555]"><button type="button" className="inline-flex items-center gap-2"><ArrowDownUp className="size-4" />Compare</button><button type="button" className="inline-flex items-center gap-2"><Share2 className="size-4" />Share</button></div>
           <p className="mt-4 flex items-center gap-2 text-xs"><Truck className="size-4" /><strong>Estimated delivery:</strong> Jul 30 – Aug 03</p>
-          <p className="mt-2 flex items-center gap-2 text-xs"><Truck className="size-4" /><strong>Free Shipping &amp; Returns:</strong> On all orders over $75</p>
+          <p className="mt-2 flex items-center gap-2 text-xs"><Truck className="size-4" /><strong>Free Shipping &amp; Returns:</strong> On all orders over {money(FREE_SHIPPING_THRESHOLD)}</p>
           <div className="mt-5 rounded-md bg-[#f7f7f7] px-5 py-4 text-center"><p className="text-xs font-medium">Guaranteed safe &amp; secure checkout</p><p className="mt-2 text-[10px] tracking-[.18em] text-[#777]">VISA · MASTERCARD · AMEX · DISCOVER</p></div>
           <div className="mt-5 divide-y divide-[#eee] border-y border-[#eee]">{['Description', 'Shipping & Returns', 'Reviews'].map((label) => <div key={label}><button type="button" onClick={() => setDetailsOpen(detailsOpen === label ? '' : label)} aria-expanded={detailsOpen === label} className="flex w-full items-center justify-between py-4 text-left text-sm font-medium">{label}<ChevronDown className={`size-4 transition-transform ${detailsOpen === label ? 'rotate-180' : ''}`} /></button>{detailsOpen === label && <p className="pb-4 text-xs leading-5 text-[#777]">{label === 'Description' ? 'A timeless wardrobe essential with a considered fit and premium feel. Designed for easy everyday styling.' : label === 'Reviews' ? 'Customers love the fit, fabric, and quality of this piece.' : 'Orders are prepared with care. Returns are accepted within 30 days of delivery.'}</p>}</div>)}</div>
         </section>

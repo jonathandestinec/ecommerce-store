@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Mail } from 'lucide-react'
 import { volkhov } from '@/styles/fonts'
+import { createClient } from '@/utils/supabase/client'
 
 export type AuthMode = 'login' | 'register' | 'forgot' | 'verify' | 'reset'
 
@@ -24,10 +25,11 @@ function AuthLinks({ children }: { children: ReactNode }) {
 export default function AuthScreen({ mode }: { mode: AuthMode }) {
   const router = useRouter()
   const [message, setMessage] = useState('')
+  const [busy, setBusy] = useState(false)
   const title = mode === 'login' ? 'Sign In To FASCO' : mode === 'register' ? 'Create Account' : mode === 'forgot' ? 'Forget Password' : mode === 'verify' ? 'Enter The Confirmation Code' : 'Enter Your New Password'
   const image = mode === 'register' ? '/assets/auth/signupgirl.png' : '/assets/auth/signingirl.png'
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     if (mode === 'register' || mode === 'reset') {
@@ -36,18 +38,49 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
         return
       }
     }
-    if (mode === 'forgot') {
-      const email = String(formData.get('email') || '')
-      router.push(`/verify-code?email=${encodeURIComponent(email)}`)
-    } else if (mode === 'verify') {
-      router.push('/reset-password')
-    } else if (mode === 'reset') {
-      setMessage('Password updated in this preview. Connect an authentication service to save it.')
-    } else if (mode === 'register') {
-      setMessage('Account creation is ready to connect to your authentication service.')
-    } else {
-      setMessage('Sign-in is ready to connect to your authentication service.')
+    setBusy(true)
+    setMessage('')
+    const supabase = createClient()
+    try {
+      if (mode === 'forgot') {
+        const email = String(formData.get('email') || '')
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/verify-code?email=${encodeURIComponent(email)}` })
+        if (error) throw error
+        router.push(`/verify-code?email=${encodeURIComponent(email)}`)
+      } else if (mode === 'verify') {
+        const email = new URLSearchParams(window.location.search).get('email') || ''
+        const code = String(formData.get('code') || '')
+        const type = new URLSearchParams(window.location.search).get('type') === 'signup' ? 'signup' : 'recovery'
+        const { error } = await supabase.auth.verifyOtp({ email, token: code, type })
+        if (error) throw error
+        router.push('/reset-password')
+      } else if (mode === 'reset') {
+        const { error } = await supabase.auth.updateUser({ password: String(formData.get('password')) })
+        if (error) throw error
+        setMessage('Your password has been updated.')
+        await supabase.auth.signOut()
+      } else if (mode === 'register') {
+        const email = String(formData.get('email') || '')
+        const { data, error } = await supabase.auth.signUp({ email, password: String(formData.get('password')), options: { data: { first_name: formData.get('firstName'), last_name: formData.get('lastName'), phone: formData.get('phone') }, emailRedirectTo: `${window.location.origin}/verify-code?email=${encodeURIComponent(email)}&type=signup` } })
+        if (error) throw error
+        if (!data.session) router.push(`/verify-code?email=${encodeURIComponent(email)}&type=signup`)
+        else router.push('/')
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email: String(formData.get('email')), password: String(formData.get('password')) })
+        if (error) throw error
+        router.push('/')
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Something went wrong. Please try again.')
+    } finally {
+      setBusy(false)
     }
+  }
+
+  async function signInWithGoogle() {
+    setBusy(true)
+    const { error } = await createClient().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback` } })
+    if (error) { setMessage(error.message); setBusy(false) }
   }
 
   return <main className="flex min-h-[calc(100svh-16px)] w-full items-center justify-center px-4 py-6 sm:px-8 md:px-12 md:py-10">
@@ -61,7 +94,7 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
           <h1 className={`${volkhov.className} mb-5 text-lg text-black`}>{title}</h1>
 
           {(mode === 'login' || mode === 'register') && <div className="mb-7 flex flex-wrap gap-3">
-            <button type="button" onClick={() => setMessage('Google sign-in is not connected yet.')} className={outlineButtonClass}><GoogleMark /> Continue with Google</button>
+            <button type="button" disabled={busy} onClick={signInWithGoogle} className={outlineButtonClass}><GoogleMark /> Continue with Google</button>
             <Link href={mode === 'login' ? '/register' : '/login'} className={outlineButtonClass}><Mail className="size-4 text-[#ef4b43]" /> {mode === 'login' ? 'Sign up with Email' : 'Sign in with Email'}</Link>
           </div>}
 
@@ -71,7 +104,7 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
             {mode === 'login' && <>
               <label className="sr-only" htmlFor="auth-email">Email</label><input className={fieldClass} id="auth-email" name="email" type="email" autoComplete="email" placeholder="Email" required />
               <label className="sr-only" htmlFor="auth-password">Password</label><input className={fieldClass} id="auth-password" name="password" type="password" autoComplete="current-password" placeholder="Password" required />
-              <button className={`${buttonClass} mt-5`} type="submit">Sign In</button>
+              <button disabled={busy} className={`${buttonClass} mt-5 disabled:opacity-60`} type="submit">{busy ? 'Please wait…' : 'Sign In'}</button>
               <div className="flex justify-end"><Link className="text-[11px] font-semibold text-[#5b80df] hover:underline" href="/forgot-password">Forgot Password?</Link></div>
               <AuthLinks>New to FASCO? <Link className="font-medium text-[#5b80df] hover:underline" href="/register">Register Now</Link></AuthLinks>
             </>}
@@ -85,7 +118,7 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
                 <label className="sr-only" htmlFor="register-password">Password</label><input className={fieldClass} id="register-password" name="password" type="password" placeholder="Password" autoComplete="new-password" minLength={8} required />
                 <label className="sr-only" htmlFor="confirm-password">Confirm password</label><input className={fieldClass} id="confirm-password" name="confirmPassword" type="password" placeholder="Confirm Password" autoComplete="new-password" minLength={8} required />
               </div>
-              <button className={`${buttonClass} mt-5`} type="submit">Create Account</button>
+              <button disabled={busy} className={`${buttonClass} mt-5 disabled:opacity-60`} type="submit">{busy ? 'Please wait…' : 'Create Account'}</button>
               <AuthLinks>Already have an account? <Link className="font-medium text-[#5b80df] hover:underline" href="/login">Login</Link></AuthLinks>
             </>}
 
@@ -104,7 +137,12 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
             {mode === 'verify' && <>
               <label className="sr-only" htmlFor="confirmation-code">Confirmation code</label><input className={fieldClass} id="confirmation-code" name="code" inputMode="numeric" autoComplete="one-time-code" placeholder="Confirmation Code" required />
               <button className={`${buttonClass} mt-5`} type="submit">Recover Account</button>
-              <AuthLinks>Didn’t receive a code? <button type="button" onClick={() => setMessage('Code resend is not connected in this preview.')} className="font-medium text-[#5b80df] hover:underline">Resend Now</button></AuthLinks>
+              <AuthLinks>Didn’t receive a code? <button type="button" onClick={async () => {
+                const email = new URLSearchParams(window.location.search).get('email') || ''
+                const type = new URLSearchParams(window.location.search).get('type')
+                const result = type === 'signup' ? await createClient().auth.resend({ type: 'signup', email }) : await createClient().auth.resetPasswordForEmail(email)
+                setMessage(result.error?.message ?? 'A new code has been sent.')
+              }} className="font-medium text-[#5b80df] hover:underline">Resend Now</button></AuthLinks>
             </>}
 
             {mode === 'reset' && <>

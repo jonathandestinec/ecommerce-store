@@ -5,6 +5,7 @@ import Nav from "@/components/nav";
 import FloatingActions from "@/components/floating-actions";
 import CartDrawer from "@/components/cart-drawer";
 import { StoreProvider } from "@/components/store-provider";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: "FASCO Ecommerce Store",
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${poppins.className} ${volkhov.className} antialiased h-full`}
     >
+      <Analytics />
       <body className="min-h-full flex flex-col">
         <StoreProvider>
           <div className="w-full max-w-7xl h-max mx-auto">

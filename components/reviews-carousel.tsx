@@ -20,10 +20,14 @@ function SideReview({ index, side }: { index: number; side: 'left' | 'right' }) 
 
 export default function ReviewsCarousel() {
   const [active, setActive] = useState(Math.max(0, customerReviews.findIndex((review) => review.id === 2)))
+  const [direction, setDirection] = useState<'next' | 'previous'>('next')
   const review = customerReviews[active]
   const previous = (active - 1 + customerReviews.length) % customerReviews.length
   const next = (active + 1) % customerReviews.length
-  const move = (step: number) => setActive((index) => (index + step + customerReviews.length) % customerReviews.length)
+  const move = (step: number) => {
+    setDirection(step > 0 ? 'next' : 'previous')
+    setActive((index) => (index + step + customerReviews.length) % customerReviews.length)
+  }
 
   return <section className="w-full bg-[#FAFAFA] px-5 py-14 md:py-20">
     <div className="mx-auto max-w-7xl">
@@ -36,7 +40,7 @@ export default function ReviewsCarousel() {
         <SideReview index={previous} side="left" />
         <SideReview index={next} side="right" />
 
-        <article aria-live="polite" className="relative z-10 grid w-full items-center gap-5 rounded-lg bg-white p-6 shadow-[0_15px_45px_rgba(46,33,61,.1)] transition-all duration-300 sm:p-8 md:w-[68%] md:grid-cols-[.9fr_1.2fr] md:gap-8 md:p-8">
+        <article key={review.id} aria-live="polite" className={`relative z-10 grid w-full items-center gap-5 rounded-lg bg-white p-6 shadow-[0_15px_45px_rgba(46,33,61,.1)] sm:p-8 md:w-[68%] md:grid-cols-[.9fr_1.2fr] md:gap-8 md:p-8 ${direction === 'next' ? 'animate-[review-enter-next_.42s_cubic-bezier(.22,1,.36,1)_both]' : 'animate-[review-enter-previous_.42s_cubic-bezier(.22,1,.36,1)_both]'}`}>
           <div className="relative mx-auto aspect-square w-36 max-w-full md:w-full">
             <span aria-hidden="true" className="absolute inset-0 translate-x-2 translate-y-2 bg-[#d8d8d8]" />
             <Image src={review.customerProfilePhoto} alt={review.customerName} fill sizes="(max-width: 640px) 144px, 260px" className="object-cover" />

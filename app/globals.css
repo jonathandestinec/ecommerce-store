@@ -29,13 +29,23 @@ html { scroll-behavior: smooth; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes deal-enter-right {
-  from { opacity: .35; transform: translateX(18px) scale(.985); }
+@keyframes deal-scene-enter-next {
+  from { opacity: .6; transform: translateX(14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes deal-scene-enter-previous {
+  from { opacity: .6; transform: translateX(-14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes review-enter-next {
+  from { opacity: 0; transform: translateX(22px) scale(.985); }
   to { opacity: 1; transform: translateX(0) scale(1); }
 }
 
-@keyframes deal-enter-left {
-  from { opacity: .35; transform: translateX(-18px) scale(.985); }
+@keyframes review-enter-previous {
+  from { opacity: 0; transform: translateX(-22px) scale(.985); }
   to { opacity: 1; transform: translateX(0) scale(1); }
 }
 

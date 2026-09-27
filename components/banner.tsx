@@ -4,6 +4,7 @@ import Button from './button'
 import { volkhov } from '@/styles/fonts'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import { formatNaira } from '@/lib/currency'
 
 const Banner = () => {
     return (
@@ -34,7 +35,7 @@ const Banner = () => {
                                 <h5 className='text-[#ffffff] text-[14px] md:text-[16px] mt-5 bg-black rounded-[10px] md:py-1.5 py-0.5 px-5'>M</h5>
                             </div>
 
-                            <p className='text-[#000000] md:mt-5 mt-2 md:w-128.75 md:text-[28px] text-[18px] font-medium'>$100.<span className='text-[16px] md:text-[24px]'>00</span></p>
+                            <p className='text-[#000000] md:mt-5 mt-2 md:w-128.75 md:text-[28px] text-[18px] font-medium'>{formatNaira(132901)}</p>
 
                             <Link href="/fashion" className="mt-3 flex md:mt-5"><Button text='Buy Now' className='md:px-15.5 px-8' /></Link>
                         </div>

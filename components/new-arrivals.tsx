@@ -8,6 +8,7 @@ import { newArivals } from '@/data/new-arrivals'
 import { formatNumber } from '@/lib/functions'
 import { cn } from '@/lib/utils'
 import { volkhov } from '@/styles/fonts'
+import { formatNaira } from '@/lib/currency'
 
 const categories = ["Women's Fashion", "Men's Fashion", 'Women Accessories', 'Men Accessories', 'Discount Deals'] as const
 
@@ -42,7 +43,7 @@ export default function NewArrivals() {
                 <span aria-label={`${product.rating} out of 5 stars`} className="shrink-0 text-xs tracking-tight text-[#FCA120] md:text-sm">★★★★★</span>
               </div>
               <p className="mt-3 text-[10px] font-medium text-[#484848] md:text-xs">({formatNumber(product.reviews)}) Customer Reviews</p>
-              <div className="mt-2 flex items-center justify-between gap-1"><span className="font-medium text-[#484848] md:text-xl">${product.price.toFixed(2)}</span><span className="text-right text-[9px] text-[#FF4646] md:text-xs">{product.saleStatus}</span></div>
+              <div className="mt-2 flex items-center justify-between gap-1"><span className="font-medium text-[#484848] md:text-xl">{formatNaira(product.price)}</span><span className="text-right text-[9px] text-[#FF4646] md:text-xs">{product.saleStatus}</span></div>
             </Link>
           ))}
         </div>

@@ -6,13 +6,14 @@ import { Minus, Plus, Trash2 } from 'lucide-react'
 import PageTitle from '@/components/page-title'
 import { useStore } from '@/components/store-provider'
 import Newsletter from '@/components/newsletter'
+import { formatNaira, GIFT_WRAP_FEE } from '@/lib/currency'
 import SiteFooter from '@/components/site-footer'
 
-const money = (value: number) => `$${value.toFixed(2)}`
+const money = formatNaira
 
 export default function CartPage() {
   const { cart, subtotal, setQuantity, removeFromCart, giftWrap, setGiftWrap } = useStore()
-  const total = subtotal + (giftWrap ? 10 : 0)
+  const total = subtotal + (giftWrap ? GIFT_WRAP_FEE : 0)
 
   return <main>
     <PageTitle title="Shopping Cart" />
@@ -37,10 +38,10 @@ export default function CartPage() {
         </div>
 
         <div className="mt-5 grid gap-8 border-t border-[#ddd] pt-6 md:grid-cols-[1fr_360px]">
-          <div className="flex items-start gap-3"><input id="gift-wrap" type="checkbox" checked={giftWrap} onChange={(event) => setGiftWrap(event.target.checked)} className="mt-1 size-4 accent-black" /><label htmlFor="gift-wrap" className="text-sm text-[#888]">Add gift wrap for {money(10)}</label></div>
+          <div className="flex items-start gap-3"><input id="gift-wrap" type="checkbox" checked={giftWrap} onChange={(event) => setGiftWrap(event.target.checked)} className="mt-1 size-4 accent-black" /><label htmlFor="gift-wrap" className="text-sm text-[#888]">Add gift wrap for {money(GIFT_WRAP_FEE)}</label></div>
           <div className="rounded-lg bg-[#fafafa] p-5">
             <div className="flex justify-between text-sm"><span>Subtotal</span><strong>{money(subtotal)}</strong></div>
-            {giftWrap && <div className="mt-3 flex justify-between text-sm text-[#777]"><span>Gift wrap</span><span>{money(10)}</span></div>}
+            {giftWrap && <div className="mt-3 flex justify-between text-sm text-[#777]"><span>Gift wrap</span><span>{money(GIFT_WRAP_FEE)}</span></div>}
             <p className="mt-3 text-xs text-[#888]">Shipping and taxes are calculated at checkout.</p>
             <Link href="/checkout" className="mt-5 flex h-12 items-center justify-center rounded-md bg-black text-sm text-white shadow-md hover:bg-[#333]">Checkout · {money(total)}</Link>
             <Link href="/fashion" className="mt-4 block text-center text-sm underline">Continue shopping</Link>

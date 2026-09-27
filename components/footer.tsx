@@ -1,12 +1,12 @@
 import Banner from './banner'
-import FollowUs from './follow-us'
+import DealsCarousel from './carousel'
 import NewsLetter from './newsletter'
 import SiteFooter from './site-footer'
 
 export default function Footer() {
   return <>
     <Banner />
-    <FollowUs />
+    <DealsCarousel/>
     <NewsLetter />
     <SiteFooter />
   </>

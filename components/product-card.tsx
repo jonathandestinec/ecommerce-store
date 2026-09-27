@@ -1,8 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/types'
+import { formatNaira } from '@/lib/currency'
 
-const money = (value: number) => `$${value.toFixed(2)}`
+const money = formatNaira
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
