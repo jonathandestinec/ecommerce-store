@@ -85,7 +85,7 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
 
   return <main className="flex min-h-[calc(100svh-16px)] w-full items-center justify-center px-4 py-6 sm:px-8 md:px-12 md:py-10">
     <section className="grid w-full max-w-330 overflow-hidden rounded-[18px] border border-[#e6e6e6] bg-white md:min-h-[min(76svh,760px)] md:grid-cols-2" aria-label={title}>
-      <div className="relative min-h-57.5 overflow-hidden sm:min-h-[300px] md:min-h-full">
+      <div className="relative min-h-57.5 overflow-hidden sm:min-h-75 md:min-h-full">
         <Image src={image} alt="FASCO fashion model" fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-center" />
       </div>
       <div className="relative flex min-h-[520px] flex-col items-center px-7 py-8 sm:px-12 md:min-h-0 md:px-[13%] md:py-10 lg:px-[15%]">
