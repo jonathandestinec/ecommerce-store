@@ -62,7 +62,7 @@ export default function ProductGrid() {
 
         <fieldset>
           <legend className="mb-3 text-sm font-medium">Colors</legend>
-          <div className="grid max-w-[185px] grid-cols-7 gap-2">
+          <div className="grid max-w-46.25 grid-cols-7 gap-2">
             {colors.map((color, index) => <button key={`${color}-${index}`} type="button" onClick={() => setSelectedColor(selectedColor === color ? null : color)} aria-label={`Filter by color ${color}`} aria-pressed={selectedColor === color} className={`grid size-5 place-items-center rounded-full ${selectedColor === color ? 'ring-1 ring-black ring-offset-2' : ''}`} style={{ backgroundColor: color }} />)}
           </div>
           {selectedColor && <button type="button" onClick={() => setSelectedColor(null)} className="mt-2 text-xs text-[#777] underline">Clear color</button>}
