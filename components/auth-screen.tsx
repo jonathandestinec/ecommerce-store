@@ -90,7 +90,7 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
       </div>
       <div className="relative flex min-h-130 flex-col items-center px-7 py-8 sm:px-12 md:min-h-0 md:px-[13%] md:py-10 lg:px-[15%]">
         <Link href="/" className={`${volkhov.className} text-[32px] text-[#484848] md:text-[38px]`}>FASCO</Link>
-        <div className="my-auto w-full max-w-[440px] py-8">
+        <div className="my-auto w-full max-w-110 py-8">
           <h1 className={`${volkhov.className} mb-5 text-lg text-black`}>{title}</h1>
 
           {(mode === 'login' || mode === 'register') && <div className="mb-7 flex flex-wrap gap-3">
