@@ -104,7 +104,7 @@ export default function ProductGrid() {
           </label>
           <div className="hidden items-center gap-2 sm:flex" aria-label="Product grid layout">
             {[1, 2, 3, 4, 5].map((count) => <button key={count} type="button" onClick={() => setColumns(count)} aria-label={`${count} column${count === 1 ? '' : 's'} grid`} aria-pressed={columns === count} className={`grid size-9 place-items-center rounded transition ${columns === count ? 'bg-[#eee]' : 'hover:bg-[#f5f5f5]'}`}>
-              {count === 1 ? <span className="flex w-3.5 flex-col gap-[3px]" aria-hidden="true">{[0, 1, 2].map((line) => <span key={line} className="h-[2px] w-full bg-[#333]" />)}</span> : <span className="flex h-3.5 items-stretch gap-[2px]" aria-hidden="true">{Array.from({ length: count }, (_, index) => <span key={index} className="w-[2px] bg-[#333]" />)}</span>}
+              {count === 1 ? <span className="flex w-3.5 flex-col gap-0.75" aria-hidden="true">{[0, 1, 2].map((line) => <span key={line} className="h-[2px] w-full bg-[#333]" />)}</span> : <span className="flex h-3.5 items-stretch gap-[2px]" aria-hidden="true">{Array.from({ length: count }, (_, index) => <span key={index} className="w-[2px] bg-[#333]" />)}</span>}
             </button>)}
           </div>
         </div>
