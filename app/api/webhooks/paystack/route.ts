@@ -38,14 +38,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Paystack transaction could not be verified.' }, { status: 502 })
     }
     try {
-      const confirmed = await confirmOrderPayment({
+      await confirmOrderPayment({
         reference,
         status: transaction.status,
         amount: transaction.amount ?? 0,
         currency: transaction.currency ?? '',
         email: transaction.customer?.email ?? '',
       })
-      if (confirmed.emailError) return NextResponse.json({ error: 'Order is paid; confirmation email will be retried.' }, { status: 500 })
     } catch {
       return NextResponse.json({ error: 'Could not reconcile the verified payment with an order.' }, { status: 500 })
     }
