@@ -1,7 +1,6 @@
 import { createHmac, randomUUID } from 'node:crypto'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { products } from '@/data/products'
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, GIFT_WRAP_FEE } from '@/lib/currency'
 import { createOrder, setOrderFailed } from '@/lib/orders'
 import { createAdminClient } from '@/lib/supabase-admin'
@@ -9,7 +8,7 @@ import { createClient } from '@/utils/supabase/server'
 
 export const runtime = 'nodejs'
 
-type CheckoutLine = { productId: number; quantity: number; size: string; color: string }
+type CheckoutLine = { productId: number | string; quantity: number; size: string; color: string }
 type CheckoutBody = {
   email?: string
   firstName?: string
@@ -30,7 +29,8 @@ function clean(value: unknown, maxLength = 160) {
 export async function POST(request: Request) {
   const secret = process.env.PAYSTACK_SECRET_KEY
   if (!secret) return NextResponse.json({ error: 'Payments are not configured yet.' }, { status: 503 })
-  try { createAdminClient() } catch { return NextResponse.json({ error: 'Order storage is not configured yet.' }, { status: 503 }) }
+  let admin
+  try { admin = createAdminClient() } catch { return NextResponse.json({ error: 'Order storage is not configured yet.' }, { status: 503 }) }
 
   try {
     const body = await request.json() as CheckoutBody
@@ -46,13 +46,25 @@ export async function POST(request: Request) {
     if (!firstName || !lastName || !deliveryAddress.address || !deliveryAddress.city || !deliveryAddress.postalCode || !deliveryAddress.country) return NextResponse.json({ error: 'Complete all required delivery details.' }, { status: 400 })
     if (!Array.isArray(body.cart) || body.cart.length === 0 || body.cart.length > 30) return NextResponse.json({ error: 'Your cart is empty or contains too many items.' }, { status: 400 })
 
+    const productIds = [...new Set(body.cart.map((line) => String(line.productId))) ]
+    const { data: catalogRows, error: catalogError } = await admin.from('products')
+      .select('id,name,images,colors,price,saleStatus').in('id', productIds)
+    if (catalogError) throw new Error('Could not validate your cart against the product catalog. Please try again.')
+    const catalog = new Map((catalogRows || []).map((row) => [String(row.id), {
+      ...row,
+      id: String(row.id),
+      price: Number(row.price),
+    }]))
+
     const lines = body.cart.map((line) => {
-      const product = products.find((item) => item.id === line.productId)
-      if (!product || !Number.isInteger(line.quantity) || line.quantity < 1 || line.quantity > 25) throw new Error('Your cart contains an invalid item.')
+      const product = catalog.get(String(line.productId))
+      if (!product) throw new Error(`Product ${String(line.productId)} is no longer in the catalog. Remove it from your cart and add it again.`)
+      if (!Number.isInteger(line.quantity) || line.quantity < 1 || line.quantity > 25) throw new Error(`The quantity for ${product.name} is invalid.`)
       if (product.saleStatus === 'Sold') throw new Error(`${product.name} is sold out and can no longer be purchased.`)
       const size = clean(line.size, 12)
       const color = clean(line.color, 24)
-      if (!['M', 'L', 'XL', 'XXL'].includes(size) || !product.colors?.some((candidate) => candidate.toLowerCase() === color.toLowerCase())) throw new Error('One of the selected product options is no longer available.')
+      if (!['M', 'L', 'XL', 'XXL'].includes(size) || !Array.isArray(product.colors) || !product.colors.some((candidate: string) => candidate.toLowerCase() === color.toLowerCase())) throw new Error('One of the selected product options is no longer available.')
+      if (!Number.isFinite(product.price) || product.price < 0 || !Array.isArray(product.images) || !product.images[0]) throw new Error(`${product.name} has incomplete product information. Contact the store for help.`)
       return { product, quantity: line.quantity, size, color }
     })
 
@@ -80,7 +92,7 @@ export async function POST(request: Request) {
       delivery_address: deliveryAddress, currency, subtotal_kobo: Math.round(subtotal * 100),
       shipping_kobo: Math.round(shipping * 100), gift_wrap_kobo: Math.round(giftWrapAmount * 100), total_kobo: amount,
     }, lines.map(({ product, quantity, size, color }) => ({
-      product_id: product.id, product_name: product.name, product_image: product.images[0],
+      product_id: String(product.id), product_name: product.name, product_image: product.images[0],
       unit_price_kobo: Math.round(product.price * 100), quantity, size, color,
     })))
 

@@ -25,7 +25,7 @@ export default function CartPage() {
         <div className="divide-y divide-[#ddd]">
           {cart.map(({ product, quantity, size, color }) => <article key={`${product.id}-${size}-${color}`} className="grid grid-cols-1 gap-4 py-5 sm:grid-cols-[minmax(0,2fr)_1fr_1.1fr_1fr] sm:items-center">
             <div className="flex items-center gap-4">
-              <Link href={`/products/${product.id}`} className="relative h-28 w-20 shrink-0 bg-[#f1f1f1]"><Image src={product.image} alt={product.name} fill sizes="80px" className="object-cover" /></Link>
+              <Link href={`/products/${product.id}`} className="relative h-28 w-20 shrink-0 bg-[#f1f1f1]"><Image src={product.images[0]} alt={product.name} fill sizes="80px" className="object-cover" /></Link>
               <div><Link href={`/products/${product.id}`} className="font-serif text-base hover:underline">{product.name}</Link><p className="mt-2 text-xs text-[#888]">Color: <span className="inline-block size-2.5 translate-y-0.5 rounded-full border" style={{ backgroundColor: color }} /></p><p className="mt-1 text-xs text-[#888]">Size: {size}</p><button type="button" onClick={() => removeFromCart(product.id, size, color)} className="mt-2 inline-flex items-center gap-1 text-xs text-[#888] underline hover:text-black"><Trash2 className="size-3" />Remove</button></div>
             </div>
             <span className="text-sm sm:block"><span className="mr-2 text-xs text-[#888] sm:hidden">Price</span>{money(product.price)}</span>

@@ -35,7 +35,7 @@ export default function ProductDetail({ product }: { product: Product }) {
       <div className="grid gap-9 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,.95fr)] lg:gap-12">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-4">
           <div className="order-2 flex gap-2 overflow-x-auto sm:order-1 sm:flex-col sm:overflow-visible">
-            {gallery.map((image, index) => <button key={image} type="button" aria-label={`Show product image ${index + 1}`} aria-pressed={selectedImage === image} onClick={() => setSelectedImage(image)} className={`relative size-16 shrink-0 overflow-hidden bg-[#f2f2f2] sm:size-14 ${selectedImage === image ? 'ring-1 ring-black ring-offset-2' : ''}`}><Image src={image} alt="" fill sizes="56px" className="object-cover" /></button>)}
+            {gallery.map((image, index) => <button key={index} type="button" aria-label={`Show product image ${index + 1}`} aria-pressed={selectedImage === image} onClick={() => setSelectedImage(image)} className={`relative size-16 shrink-0 overflow-hidden bg-[#f2f2f2] sm:size-14 ${selectedImage === image ? 'ring-1 ring-black ring-offset-2' : ''}`}><Image src={image} alt="" fill sizes="56px" className="object-cover" /></button>)}
           </div>
           <div className="relative order-1 aspect-[.78] overflow-hidden bg-[#f0f0f0] sm:order-2 sm:aspect-[.75]">
             <Image src={selectedImage} alt={product.name} fill loading="eager" sizes="(max-width: 640px) 100vw, 55vw" className="object-cover" />

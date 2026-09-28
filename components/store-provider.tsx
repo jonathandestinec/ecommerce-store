@@ -22,8 +22,8 @@ interface StoreState {
   closeCart: () => void
   setGiftWrap: (enabled: boolean) => void
   addToCart: (product: Product, quantity?: number, size?: string, color?: string) => void
-  setQuantity: (productId: number, size: string, color: string, quantity: number) => void
-  removeFromCart: (productId: number, size: string, color: string) => void
+  setQuantity: (productId: number | string, size: string, color: string, quantity: number) => void
+  removeFromCart: (productId: number | string, size: string, color: string) => void
   clearCart: () => void
   hydrateCart: (cart: CartItem[]) => void
 }

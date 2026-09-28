@@ -11,7 +11,7 @@ export type DeliveryAddress = {
 export type OrderItemRecord = {
   id: number
   order_id: string
-  product_id: number
+  product_id: string
   product_name: string
   product_image: string
   unit_price_kobo: number
@@ -42,12 +42,13 @@ export type NewOrderItem = Omit<OrderItemRecord, 'id' | 'order_id'>
 export async function createOrder(order: NewOrder, items: NewOrderItem[]) {
   const admin = createAdminClient()
   const { data: created, error } = await admin.from('orders').insert(order).select('*').single()
-  if (error?.code === 'PGRST205') throw new Error('Order storage tables are missing. Run supabase/migrations/202609270001_orders.sql in your Supabase SQL Editor, then try again.')
+  if (error?.code === 'PGRST205') throw new Error('Order storage tables are missing.')
   if (error) throw new Error('Could not save the order before payment.')
 
   const { error: itemError } = await admin.from('order_items').insert(items.map((item) => ({ ...item, order_id: created.id })))
   if (itemError) {
     await admin.from('orders').delete().eq('id', created.id)
+    if (itemError.code === '22P02') throw new Error('Order item IDs need a database update. Run supabase/migrations/202609280001_product_order_ids.sql in your Supabase SQL Editor, then try again.')
     throw new Error('Could not save the items for this order.')
   }
   return created as OrderRecord
