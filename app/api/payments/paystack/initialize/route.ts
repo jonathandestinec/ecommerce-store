@@ -80,7 +80,7 @@ export async function POST(request: Request) {
       delivery_address: deliveryAddress, currency, subtotal_kobo: Math.round(subtotal * 100),
       shipping_kobo: Math.round(shipping * 100), gift_wrap_kobo: Math.round(giftWrapAmount * 100), total_kobo: amount,
     }, lines.map(({ product, quantity, size, color }) => ({
-      product_id: product.id, product_name: product.name, product_image: product.image,
+      product_id: product.id, product_name: product.name, product_image: product.images[0],
       unit_price_kobo: Math.round(product.price * 100), quantity, size, color,
     })))
 

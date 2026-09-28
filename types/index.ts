@@ -31,7 +31,7 @@ export interface ProductLayouts {
 }
 
 export interface Product {
-    image: string;
+    images: [string];
     name: string;
     seller?: string;
     rating?: number | 5;

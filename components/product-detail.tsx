@@ -14,14 +14,14 @@ const money = formatNaira
 
 export default function ProductDetail({ product }: { product: Product }) {
   const { addToCart, openCart } = useStore()
-  const [selectedImage, setSelectedImage] = useState(product.image)
+  const [selectedImage, setSelectedImage] = useState(product.images[0])
   const [selectedSize, setSelectedSize] = useState('M')
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] ?? '#8db4d2')
   const [quantity, setQuantity] = useState(1)
   const [saved, setSaved] = useState(false)
   const [added, setAdded] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState('Description')
-  const gallery = [product.image, ...products.filter((item) => item.id !== product.id).map((item) => item.image)].slice(0, 7)
+  const gallery = [product.images[0], ...products.filter((item) => item.id !== product.id).map((item) => item.images[0])].slice(0, 7)
   const regularPrice = product.price + (product.discount ?? 0)
   const discountPercent = product.discount ? Math.round((product.discount / regularPrice) * 100) : 0
   const colorNames: Record<string, string> = { '#8db4d2': 'Blue', '#000000': 'Black', '#ffd1dc': 'Pink', '#d0d5dd': 'White', '#d1e9cf': 'Green', '#1d3557': 'Navy', '#d8b4e2': 'Lilac', '#ffd700': 'Gold' }

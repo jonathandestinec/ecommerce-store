@@ -43,7 +43,7 @@ export default function CartDrawer() {
               {cart.map(({ product, quantity, size, color }) => (
                 <article key={`${product.id}-${size}-${color}`} className="flex gap-4 border-b border-[#ddd] pb-5">
                   <Link href={`/products/${product.id}`} onClick={closeCart} className="relative h-32 w-24 shrink-0 bg-[#f3f3f3]">
-                    <Image src={product.image} alt={product.name} fill sizes="96px" className="object-cover" />
+                    <Image src={product.images[0]} alt={product.name} fill sizes="96px" className="object-cover" />
                   </Link>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">

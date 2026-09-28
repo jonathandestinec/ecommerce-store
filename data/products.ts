@@ -6,7 +6,7 @@ const products: Product[] = [
         id: 10,
         price: 10632,
         colors: ["#FFD700", "#000000"],
-        image: "/assets/products/1.png",
+        images: ["/assets/products/1.png"],
         saleStatus: "Available"
     },
     {
@@ -14,7 +14,7 @@ const products: Product[] = [
         id: 11,
         price: 22593,
         colors: ["#8DB4D2", "#FFD1DC"],
-        image: "/assets/products/2.png",
+        images: ["/assets/products/2.png"],
         saleStatus: "Sold"
     },
     {
@@ -22,7 +22,7 @@ const products: Product[] = [
         id: 12,
         price: 140875,
         colors: ["#D0D5DD", "#D1E9CF"],
-        image: "/assets/products/3.png",
+        images: ["/assets/products/3.png"],
         saleStatus: "Available"
     },
     {
@@ -30,7 +30,7 @@ const products: Product[] = [
         id: 13,
         price: 33225,
         colors: ["#8DB4D2", "#1D3557"],
-        image: "/assets/products/4.png",
+        images: ["/assets/products/4.png"],
         saleStatus: "Available"
     },
     {
@@ -38,7 +38,7 @@ const products: Product[] = [
         id: 14,
         price: 33225,
         colors: ["#D1E9CF", "#000000"],
-        image: "/assets/products/5.png",
+        images: ["/assets/products/5.png"],
         saleStatus: "Available"
     },
     {
@@ -46,7 +46,7 @@ const products: Product[] = [
         id: 15,
         price: 14619,
         colors: ["#FFD1DC", "#D8B4E2"],
-        image: "/assets/products/6.png",
+        images: ["/assets/products/6.png"],
         saleStatus: "Available",
         discount: 18606
     },
@@ -55,7 +55,7 @@ const products: Product[] = [
         id: 16,
         price: 23922,
         colors: ["#1D3557", "#8B5A2B"],
-        image: "/assets/products/7.png",
+        images: ["/assets/products/7.png"],
         saleStatus: "Available",
         discount: 27909
     },
@@ -64,7 +64,7 @@ const products: Product[] = [
         id: 17,
         price: 29238,
         colors: ["#D8B4E2", "#8DB4D2"],
-        image: "/assets/products/8.png",
+        images: ["/assets/products/8.png"],
         saleStatus: "Available",
     },
     {
@@ -72,7 +72,7 @@ const products: Product[] = [
         id: 18,
         price: 26580,
         colors: ["#1D3557", "#000000", "#8DB4D2"],
-        image: "/assets/products/9.png",
+        images: ["/assets/products/9.png"],
         saleStatus: "Available",
     }
 ]
