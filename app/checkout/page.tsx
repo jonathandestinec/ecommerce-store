@@ -72,5 +72,6 @@ export default function CheckoutPage() {
     </div>
     <SiteFooter />
     <Newsletter />
+    
   </main>
 }

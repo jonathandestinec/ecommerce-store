@@ -19,14 +19,14 @@ const storeLinks = [
   { text: 'Home', href: '/' },
   { text: 'Shop', href: '/fashion' },
   { text: 'Products', href: '/fashion' },
+  { text: 'Dashboard', href: '/dashboard' },
 ]
 
 export default function Nav() {
   const [open, setOpen] = useState(false)
-  const [saved, setSaved] = useState(false)
   const pathname = usePathname()
   const { cartCount, openCart } = useStore()
-  if (['/login', '/register', '/forgot-password', '/verify-code', '/reset-password'].includes(pathname)) return null
+  if (['/login', '/register', '/forgot-password', '/verify-code', '/reset-password'].includes(pathname) || pathname.startsWith('/dashboard')) return null
   const showStoreIcons = pathname !== '/'
   return <header className="relative z-20 mx-auto w-full max-w-7xl px-5 pt-4 md:pt-7">
     <nav className="flex items-center justify-between" aria-label="Main navigation">
@@ -39,6 +39,8 @@ export default function Nav() {
         {showStoreIcons ? <details className="group relative">
           <summary className="flex cursor-pointer list-none items-center gap-1 text-sm text-[#484848] transition hover:text-black [&::-webkit-details-marker]:hidden">Pages <span aria-hidden="true" className="-mt-1 text-xs">⌄</span></summary>
           <div className="absolute left-0 top-full z-30 mt-3 min-w-40 rounded-md border border-[#eee] bg-white p-2 shadow-lg">
+            <Link href="/dashboard" className="block rounded px-3 py-2 text-sm text-[#484848] hover:bg-[#f6f6f6]">Dashboard</Link>
+            <Link href="/dashboard/orders" className="block rounded px-3 py-2 text-sm text-[#484848] hover:bg-[#f6f6f6]">Orders</Link>
             <Link href="/login" className="block rounded px-3 py-2 text-sm text-[#484848] hover:bg-[#f6f6f6]">Sign in</Link>
             <Link href="/register" className="block rounded px-3 py-2 text-sm text-[#484848] hover:bg-[#f6f6f6]">Create account</Link>
             <Link href="/cart" className="block rounded px-3 py-2 text-sm text-[#484848] hover:bg-[#f6f6f6]">Shopping cart</Link>
@@ -48,7 +50,7 @@ export default function Nav() {
       {showStoreIcons && <div className="hidden items-center gap-1 md:flex lg:gap-0">
           <Link href="/fashion" aria-label="Search products" title="Search products" className="grid size-9 place-items-center text-[#484848] hover:text-black"><Search className="size-5" /></Link>
           <Link href="/login" aria-label="Sign in to your account" title="Sign in" className="grid size-9 place-items-center text-[#484848] hover:text-black"><UserRound className="size-5" /></Link>
-          <button type="button" onClick={() => setSaved((value) => !value)} aria-label={saved ? 'Remove from wishlist' : 'Wishlist'} aria-pressed={saved} title="Wishlist" className="grid size-9 place-items-center text-[#484848] hover:text-black"><Star className={`size-5 ${saved ? 'fill-black' : ''}`} /></button>
+          <Link href="/dashboard/wishlist" aria-label="Open wishlist" title="Wishlist" className="grid size-9 place-items-center text-[#484848] hover:text-black"><Star className="size-5" /></Link>
           <button type="button" onClick={openCart} aria-label={`Open shopping cart${cartCount ? `, ${cartCount} items` : ''}`} className="relative grid size-9 place-items-center text-[#484848] hover:text-black"><ShoppingBag className="size-5" />{cartCount > 0 && <span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-full bg-[#f13b3b] text-[10px] text-white">{cartCount}</span>}</button>
       </div>}
       <div className="flex items-center gap-2 md:hidden">

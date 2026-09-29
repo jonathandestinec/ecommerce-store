@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowDownUp, ChevronDown, Eye, Heart, Share2, Truck } from 'lucide-react'
 import type { Product } from '@/types'
 import { products } from '@/data/products'
 import { useStore } from './store-provider'
+import { useAuth } from './auth-provider'
+import { addToDbWishlist, readLocalWishlist, removeFromDbWishlist, writeLocalWishlist } from '@/lib/wishlist'
 import { formatNaira, FREE_SHIPPING_THRESHOLD } from '@/lib/currency'
 
 const sizes = ['M', 'L', 'XL', 'XXL']
@@ -14,6 +16,7 @@ const money = formatNaira
 
 export default function ProductDetail({ product }: { product: Product }) {
   const { addToCart, openCart } = useStore()
+  const { user } = useAuth()
   const [selectedImage, setSelectedImage] = useState(product.images[0])
   const [selectedSize, setSelectedSize] = useState('M')
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] ?? '#8db4d2')
@@ -27,6 +30,40 @@ export default function ProductDetail({ product }: { product: Product }) {
   const colorNames: Record<string, string> = { '#8db4d2': 'Blue', '#000000': 'Black', '#ffd1dc': 'Pink', '#d0d5dd': 'White', '#d1e9cf': 'Green', '#1d3557': 'Navy', '#d8b4e2': 'Lilac', '#ffd700': 'Gold' }
   const colorName = colorNames[selectedColor.toLowerCase()] ?? 'Selected'
   const soldOut = product.saleStatus === 'Sold'
+  const productId = String(product.id)
+
+  useEffect(() => {
+    let active = true
+    async function checkSaved() {
+      if (user) {
+        const { createClient } = await import('@/utils/supabase/client')
+        const supabase = createClient()
+        const { data } = await supabase
+          .from('wishlist_items')
+          .select('product_id')
+          .eq('user_id', user.id)
+          .eq('product_id', productId)
+          .maybeSingle()
+        if (active) setSaved(!!data)
+      } else if (typeof window !== 'undefined') {
+        if (active) setSaved(readLocalWishlist().includes(productId))
+      }
+    }
+    checkSaved()
+    return () => { active = false }
+  }, [user, productId])
+
+  async function toggleSaved() {
+    const next = !saved
+    setSaved(next)
+    if (user) {
+      if (next) await addToDbWishlist(productId)
+      else await removeFromDbWishlist(productId)
+    } else if (typeof window !== 'undefined') {
+      const current = readLocalWishlist()
+      writeLocalWishlist(next ? [...new Set([...current, productId])] : current.filter((id) => id !== productId))
+    }
+  }
 
   return (
     <main className="mx-auto w-full max-w-7xl px-5 pb-14 pt-8 md:px-7 md:pt-12">
@@ -45,7 +82,7 @@ export default function ProductDetail({ product }: { product: Product }) {
         <section className="text-[#222]">
           <div className="flex items-start justify-between gap-4">
             <div><p className="font-serif text-sm text-[#777]">FASCO</p><h1 className="mt-1 font-serif text-3xl md:text-4xl">{product.name}</h1></div>
-            <button type="button" onClick={() => setSaved((value) => !value)} aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'} aria-pressed={saved} className={`mt-2 grid size-10 shrink-0 place-items-center rounded-full border ${saved ? 'border-black bg-black text-white' : 'border-[#eee] hover:border-black'}`}><Heart className="size-4" fill={saved ? 'currentColor' : 'none'} /></button>
+            <button type="button" onClick={toggleSaved} aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'} aria-pressed={saved} className={`mt-2 grid size-10 shrink-0 place-items-center rounded-full border ${saved ? 'border-black bg-black text-white' : 'border-[#eee] hover:border-black'}`}><Heart className="size-4" fill={saved ? 'currentColor' : 'none'} /></button>
           </div>
           <div className="mt-2 flex items-center gap-2 text-sm"><span className="tracking-tight text-black">★★★★<span className="text-[#aaa]">★</span></span><span className="text-xs text-[#777]">(3 reviews)</span></div>
           <div className="mt-4 flex items-center gap-3"><span className="text-xl font-medium">{money(product.price)}</span>{product.discount && <><span className="text-sm text-[#888] line-through">{money(regularPrice)}</span><span className="rounded-full bg-[#e85050] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">Save {discountPercent}%</span></>}</div>

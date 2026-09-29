@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 import { useStore } from '@/components/store-provider'
+import { CopyId } from '@/components/ui/copy-id'
 
 function PaymentResult() {
   const params = useSearchParams()
@@ -11,6 +12,7 @@ function PaymentResult() {
   const clearCart = useStore((state) => state.clearCart)
   const [message, setMessage] = useState(reference ? 'Verifying your payment…' : 'No payment reference was provided.')
   const [paid, setPaid] = useState(false)
+  const [orderId, setOrderId] = useState<string | null>(null)
 
   useEffect(() => {
     let active = true
@@ -23,7 +25,8 @@ function PaymentResult() {
         if (result.paid) {
           clearCart()
           setPaid(true)
-          setMessage(`Your payment was successful. Order ${result.orderId?.slice(0, 8).toUpperCase()} is confirmed.`)
+          setOrderId(result.orderId ?? null)
+          setMessage('Your payment was successful. Your order is confirmed.')
         }
         else setMessage(`Payment status: ${result.status || 'pending'}. Please check again shortly.`)
       })
@@ -32,9 +35,15 @@ function PaymentResult() {
   }, [reference, clearCart])
 
   return <main className="mx-auto flex min-h-[55vh] max-w-3xl flex-col items-center justify-center px-5 text-center">
-    <h1 className="font-serif text-3xl">{paid ? 'Thank you!' : 'Payment update'}</h1>
+    <h1 className="font-serif text-3xl text-[#484848]">{paid ? 'Thank you!' : 'Payment update'}</h1>
     <p role="status" className="mt-4 text-sm text-[#777]">{message}</p>
-    <Link href={paid ? '/' : '/cart'} className="mt-7 rounded bg-black px-7 py-3 text-sm text-white">{paid ? 'Continue shopping' : 'Return to cart'}</Link>
+    {paid && (
+      <div className="mt-4 flex max-w-full flex-col items-center gap-2 rounded-[10px] border border-[#e6e6e6] bg-[#fafafa] px-4 py-3 text-xs text-[#555]">
+        {orderId && <span className="flex max-w-full items-center gap-1.5">Order <CopyId value={orderId} label="Order ID" /></span>}
+        {reference && <span className="flex max-w-full items-center gap-1.5">Receipt <CopyId value={reference} label="Payment reference" className="max-w-60" /></span>}
+      </div>
+    )}
+    <Link href={paid ? '/' : '/cart'} className="mt-7 rounded-[10px] bg-black px-7 py-3 text-sm text-white shadow-[0_20px_35px_0_rgba(0,0,0,0.15)] transition hover:bg-[#333]">{paid ? 'Continue shopping' : 'Return to cart'}</Link>
   </main>
 }
 

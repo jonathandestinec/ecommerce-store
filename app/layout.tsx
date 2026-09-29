@@ -5,6 +5,7 @@ import Nav from "@/components/nav";
 import FloatingActions from "@/components/floating-actions";
 import CartDrawer from "@/components/cart-drawer";
 import { StoreProvider } from "@/components/store-provider";
+import { AuthProvider } from "@/components/auth-provider";
 import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
       <Analytics />
         <StoreProvider>
+          <AuthProvider>
           <div className="w-full max-w-7xl h-max mx-auto">
             <Nav />
           </div>
           {children}
           <FloatingActions />
           <CartDrawer />
+          </AuthProvider>
         </StoreProvider>
       </body>
     </html>

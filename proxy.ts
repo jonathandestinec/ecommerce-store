@@ -18,7 +18,14 @@ export async function proxy(request: NextRequest) {
     },
   })
 
-  await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getUser()
+  const pathname = request.nextUrl.pathname
+  const protectedPrefixes = ["/dashboard/orders", "/dashboard/profile", "/dashboard/settings", "/dashboard/wishlist"]
+  if (!data.user && protectedPrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    const login = new URL("/login", request.url)
+    login.searchParams.set("next", pathname)
+    return NextResponse.redirect(login)
+  }
   return response
 }
 

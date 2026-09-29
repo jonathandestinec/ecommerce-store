@@ -68,7 +68,8 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: String(formData.get('email')), password: String(formData.get('password')) })
         if (error) throw error
-        router.push('/')
+        const next = new URLSearchParams(window.location.search).get('next')
+        router.push(next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard')
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Something went wrong. Please try again.')
@@ -79,7 +80,9 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
 
   async function signInWithGoogle() {
     setBusy(true)
-    const { error } = await createClient().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback` } })
+    const next = new URLSearchParams(window.location.search).get('next')
+    const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard'
+    const { error } = await createClient().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeNext)}` } })
     if (error) { setMessage(error.message); setBusy(false) }
   }
 
