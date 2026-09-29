@@ -48,7 +48,6 @@ export const dashboardNav: DashboardNavSection[] = [
     title: "Settings",
     items: [
       { label: "Profile", href: "/dashboard/profile", icon: UserRound, requiresAuth: true, description: "Name and phone" },
-      { label: "Settings", href: "/dashboard/settings", icon: Settings, requiresAuth: true, description: "Session and sign out" },
     ],
   },
 ]

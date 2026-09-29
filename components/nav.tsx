@@ -22,12 +22,19 @@ const storeLinks = [
   { text: 'Dashboard', href: '/dashboard' },
 ]
 
+const homeMobileLinks = [
+  ...links,
+  { text: 'Shop', href: '/fashion' },
+  { text: 'Dashboard', href: '/dashboard' },
+]
+
 export default function Nav() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const { cartCount, openCart } = useStore()
   if (['/login', '/register', '/forgot-password', '/verify-code', '/reset-password'].includes(pathname) || pathname.startsWith('/dashboard')) return null
   const showStoreIcons = pathname !== '/'
+  const mobileLinks = showStoreIcons ? storeLinks : homeMobileLinks
   return <header className="relative z-20 mx-auto w-full max-w-7xl px-5 pt-4 md:pt-7">
     <nav className="flex items-center justify-between" aria-label="Main navigation">
       <Link href="/" className={`${volkhov.className} text-3xl text-[#484848] md:text-[42px]`}>FASCO</Link>
@@ -59,8 +66,10 @@ export default function Nav() {
       </div>
     </nav>
     <div id="mobile-navigation" className={cn('absolute inset-x-5 top-full mt-2 rounded-xl bg-white p-3 shadow-xl md:hidden', open ? 'block' : 'hidden')}>
-      {links.map((link) => <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="block rounded-lg px-4 py-3 text-sm text-[#484848] hover:bg-[#f6f6f6]">{link.text}</Link>)}
-      <Link href="/fashion" onClick={() => setOpen(false)} className="block rounded-lg px-4 py-3 text-sm text-[#484848] hover:bg-[#f6f6f6]">Shop</Link>
+      {mobileLinks.map((link, index) => {
+        const active = link.href === '/' ? pathname === '/' : pathname === link.href || (link.href !== '/#deals' && link.href !== '/#new-arrivals' && link.href !== '/#banner' && pathname.startsWith(`${link.href}/`))
+        return <Link key={`${link.href}-${index}`} href={link.href} aria-current={active ? 'page' : undefined} onClick={() => setOpen(false)} className={cn('block rounded-lg px-4 py-3 text-sm transition hover:bg-[#f6f6f6]', active ? 'font-medium text-black' : 'text-[#484848]')}>{link.text}</Link>
+      })}
     </div>
   </header>
 }

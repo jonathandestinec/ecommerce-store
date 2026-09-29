@@ -2,8 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Lock, LogIn } from "lucide-react"
-import { volkhov } from "@/styles/fonts"
+import { Lock, LogIn, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/components/auth-provider"
 import { useStore } from "@/components/store-provider"
@@ -11,7 +10,6 @@ import { useSidebar, SidebarGroupLabel } from "@/components/ui/sidebar"
 import { SidebarGroup, SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { dashboardNav, signInItem } from "@/components/dashboard/nav-config"
@@ -29,9 +27,16 @@ function isActive(pathname: string, href: string) {
 export function AppSidebarBody() {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, loading } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const cartCount = useStore((s) => s.cartCount)
   const { collapsed, setMobileOpen } = useSidebar()
+
+  async function handleSignOut() {
+    await signOut()
+    setMobileOpen(false)
+    router.replace("/")
+    router.refresh()
+  }
 
   const goLogin = (next: string) => {
     setMobileOpen(false)
@@ -138,6 +143,7 @@ export function AppSidebarBody() {
         {loading ? (
           <Skeleton className="h-10 w-full" />
         ) : user ? (
+          <>
           <Link
             href="/dashboard/profile"
             onClick={() => setMobileOpen(false)}
@@ -157,13 +163,21 @@ export function AppSidebarBody() {
               </span>
             )}
           </Link>
-        ) : (
-          !collapsed && (
-            <Button size="sm" className="w-full" onClick={() => goLogin("/dashboard")}>
-              <LogIn /> Sign in
-            </Button>
-          )
-        )}
+          <button
+            type="button"
+            onClick={handleSignOut}
+            aria-label="Sign out"
+            title={collapsed ? "Sign out" : undefined}
+            className={cn(
+              "mt-2 flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-[#484848] transition hover:bg-[#f6f6f6] hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black",
+              collapsed && "justify-center px-0"
+            )}
+          >
+            <LogOut className="size-4 shrink-0" aria-hidden="true" />
+            {!collapsed && <span className="text-left">Sign out</span>}
+          </button>
+          </>
+        ) : null}
       </div>
     </TooltipProvider>
   )
