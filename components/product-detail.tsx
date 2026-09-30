@@ -10,11 +10,12 @@ import { useStore } from './store-provider'
 import { useAuth } from './auth-provider'
 import { addToDbWishlist, readLocalWishlist, removeFromDbWishlist, writeLocalWishlist } from '@/lib/wishlist'
 import { formatNaira, FREE_SHIPPING_THRESHOLD } from '@/lib/currency'
+import { useQuery } from '@tanstack/react-query'
 
 const sizes = ['M', 'L', 'XL', 'XXL']
 const money = formatNaira
 
-export default function ProductDetail({ product }: { product: Product }) {
+export default function ProductDetail() {
   const { addToCart, openCart } = useStore()
   const { user } = useAuth()
   const [selectedImage, setSelectedImage] = useState(product.images[0])
@@ -32,26 +33,30 @@ export default function ProductDetail({ product }: { product: Product }) {
   const soldOut = product.saleStatus === 'Sold'
   const productId = String(product.id)
 
-  useEffect(() => {
+  async function checkSaved() {
     let active = true
-    async function checkSaved() {
-      if (user) {
-        const { createClient } = await import('@/utils/supabase/client')
-        const supabase = createClient()
-        const { data } = await supabase
-          .from('wishlist_items')
-          .select('product_id')
-          .eq('user_id', user.id)
-          .eq('product_id', productId)
-          .maybeSingle()
-        if (active) setSaved(!!data)
-      } else if (typeof window !== 'undefined') {
-        if (active) setSaved(readLocalWishlist().includes(productId))
-      }
+    if (user) {
+      const { createClient } = await import('@/utils/supabase/client')
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('wishlist_items')
+        .select('product_id')
+        .eq('user_id', user.id)
+        .eq('product_id', productId)
+        .maybeSingle()
+      if (active) setSaved(!!data)
+    } else if (typeof window !== 'undefined') {
+      if (active) setSaved(readLocalWishlist().includes(productId))
     }
-    checkSaved()
-    return () => { active = false }
-  }, [user, productId])
+
+    active = false
+  }
+
+  const { isPending, error, data: product } = useQuery({
+    queryKey: ['product'],
+    queryFn: checkSaved
+  })
+
 
   async function toggleSaved() {
     const next = !saved

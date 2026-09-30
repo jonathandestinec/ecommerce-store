@@ -9,14 +9,20 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
+  HydrationBoundary, dehydrate
 } from '@tanstack/react-query'
+import { getQueryClient } from '@/app/get-query-client';
 
 
-export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+
+  const queryClient = getQueryClient()
+
 
   const fetchProductDetail = async () => {
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore)
+
 
     const { id } = await params
     const { data: product } = await supabase.from("products")
@@ -27,15 +33,19 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     return product
   }
 
-  const { isPending, isError, data: product, error } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchProductDetail,
+  const product = await queryClient.query({
+    queryKey: ['product'],
+    queryFn: fetchProductDetail
   })
 
   if (!product) notFound()
 
   return <>
-    <ProductDetail product={product} />
+
+    {/* Set hydration boundry around the client component */}
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProductDetail />
+    </HydrationBoundary>
     <Footer />
   </>
 }

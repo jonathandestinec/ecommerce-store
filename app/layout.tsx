@@ -7,6 +7,7 @@ import CartDrawer from "@/components/cart-drawer";
 import { StoreProvider } from "@/components/store-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { Analytics } from "@vercel/analytics/next"
+import TanstackProvider from "@/components/providers/tanstack-query-provider";
 
 export const metadata: Metadata = {
   title: "FASCO Ecommerce Store",
@@ -20,15 +21,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${poppins.className} ${volkhov.className} antialiased h-full`}
     >
       <body className="min-h-full flex flex-col">
-      <Analytics />
+        <Analytics />
         <StoreProvider>
           <AuthProvider>
-          <div className="w-full max-w-7xl h-max mx-auto">
-            <Nav />
-          </div>
-          {children}
-          <FloatingActions />
-          <CartDrawer />
+            <div className="w-full max-w-7xl h-max mx-auto">
+              <Nav />
+            </div>
+            <TanstackProvider>
+              {children}
+            </TanstackProvider>
+            <FloatingActions />
+            <CartDrawer />
           </AuthProvider>
         </StoreProvider>
       </body>
