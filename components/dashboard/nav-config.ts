@@ -3,7 +3,6 @@ import {
   LayoutDashboard,
   LogIn,
   Package,
-  Settings,
   ShoppingBag,
   Store,
   Tag,
