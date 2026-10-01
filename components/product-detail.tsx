@@ -32,7 +32,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
 
   // get the prefetched data from useQuery
   const { data: product } = useSuspenseQuery({
-    queryKey: ['products'],
+    queryKey: ['product'],
     queryFn: fetchProductDetail
   })
 
@@ -71,7 +71,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
   }
 
   useQuery({
-    queryKey: ['products'],
+    queryKey: ['product'],
     queryFn: checkSaved
   })
 

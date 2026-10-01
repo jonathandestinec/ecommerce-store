@@ -6,6 +6,7 @@ import ProductCard from './product-card'
 import { formatNaira } from '@/lib/currency'
 import { Product } from '@/types'
 import { createClient } from '@/utils/supabase/client'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 const colors = ['#ff6c6c', '#ff7629', '#fff06c', '#9bff6c', '#6cff9e', '#6cffdc', '#6cb9ff', '#6cf6ff', '#6ca7ff', '#6c7bff', '#8a6cff', '#b66cff', '#fc6cff', '#ff6c6c']
 const columnClass: Record<number, string> = {
@@ -26,20 +27,18 @@ const supabase = createClient()
 
 export default function ProductGrid() {
 
-  // Products State and Fetching
-  const [products, setProducts] = useState<Product[]>([])
+  async function fetchProducts() {
+    const { data, error } = await supabase.from("products").select()
 
-  useEffect(() => {
-    async function fetchProducts() {
-      const { data, error } = await supabase.from("products").select()
+    console.log('client fetch')
 
-      //Set the products state
-      setProducts(data as Product[])
-      console.log({data, error})
-    }
+    return data as Product[]
+  }
 
-    fetchProducts()
-  }, [])
+  const { data: products } = useSuspenseQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts
+  })
 
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [priceRange, setPriceRange] = useState<string | null>(null)
