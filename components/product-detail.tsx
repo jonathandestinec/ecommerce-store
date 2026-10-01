@@ -10,12 +10,32 @@ import { useStore } from './store-provider'
 import { useAuth } from './auth-provider'
 import { addToDbWishlist, readLocalWishlist, removeFromDbWishlist, writeLocalWishlist } from '@/lib/wishlist'
 import { formatNaira, FREE_SHIPPING_THRESHOLD } from '@/lib/currency'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { createClient } from '@/utils/supabase/client'
 
 const sizes = ['M', 'L', 'XL', 'XXL']
 const money = formatNaira
 
-export default function ProductDetail() {
+export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
+
+  const fetchProductDetail = async () => {
+
+    const supabase = createClient()
+
+    const { data } = await supabase.from("products")
+      .select("*")
+      .eq("id", (await params).id)
+      .single()
+
+    return data
+  }
+
+  // get the prefetched data from useQuery
+  const { data: product } = useSuspenseQuery({
+    queryKey: ['products'],
+    queryFn: fetchProductDetail
+  })
+
   const { addToCart, openCart } = useStore()
   const { user } = useAuth()
   const [selectedImage, setSelectedImage] = useState(product.images[0])
@@ -31,29 +51,27 @@ export default function ProductDetail() {
   const colorNames: Record<string, string> = { '#8db4d2': 'Blue', '#000000': 'Black', '#ffd1dc': 'Pink', '#d0d5dd': 'White', '#d1e9cf': 'Green', '#1d3557': 'Navy', '#d8b4e2': 'Lilac', '#ffd700': 'Gold' }
   const colorName = colorNames[selectedColor.toLowerCase()] ?? 'Selected'
   const soldOut = product.saleStatus === 'Sold'
-  const productId = String(product.id)
 
   async function checkSaved() {
     let active = true
     if (user) {
-      const { createClient } = await import('@/utils/supabase/client')
       const supabase = createClient()
       const { data } = await supabase
         .from('wishlist_items')
         .select('product_id')
         .eq('user_id', user.id)
-        .eq('product_id', productId)
+        .eq('product_id', (await params).id)
         .maybeSingle()
       if (active) setSaved(!!data)
     } else if (typeof window !== 'undefined') {
-      if (active) setSaved(readLocalWishlist().includes(productId))
+      if (active) setSaved(readLocalWishlist().includes((await params).id))
     }
 
     active = false
   }
 
-  const { isPending, error, data: product } = useQuery({
-    queryKey: ['product'],
+  useQuery({
+    queryKey: ['products'],
     queryFn: checkSaved
   })
 
@@ -62,11 +80,11 @@ export default function ProductDetail() {
     const next = !saved
     setSaved(next)
     if (user) {
-      if (next) await addToDbWishlist(productId)
-      else await removeFromDbWishlist(productId)
+      if (next) await addToDbWishlist((await params).id)
+      else await removeFromDbWishlist((await params).id)
     } else if (typeof window !== 'undefined') {
       const current = readLocalWishlist()
-      writeLocalWishlist(next ? [...new Set([...current, productId])] : current.filter((id) => id !== productId))
+      writeLocalWishlist(next ? [...new Set([...current, (await params).id])] : current.filter(async (id) => id !== (await params).id))
     }
   }
 
@@ -98,7 +116,7 @@ export default function ProductDetail() {
 
           <fieldset className="mt-6"><legend className="text-sm font-semibold">Size: {selectedSize}</legend><div className="mt-3 flex gap-2">{sizes.map((size) => <button key={size} type="button" onClick={() => setSelectedSize(size)} aria-pressed={selectedSize === size} className={`grid h-10 min-w-10 place-items-center rounded border px-3 text-xs ${selectedSize === size ? 'border-black bg-black text-white' : 'border-[#ddd] hover:border-black'}`}>{size}</button>)}</div></fieldset>
 
-          <fieldset className="mt-5"><legend className="text-sm font-semibold">Color: <span className="font-normal text-[#777]">{colorName}</span></legend><div className="mt-3 flex gap-2.5">{(product.colors?.length ? product.colors : ['#8db4d2', '#000000', '#ffd1dc']).slice(0, 3).map((color, index) => <button key={`${color}-${index}`} type="button" onClick={() => setSelectedColor(color)} aria-label={`Select color ${colorNames[color.toLowerCase()] ?? index + 1}`} aria-pressed={selectedColor === color} className={`grid size-7 place-items-center rounded-full ${selectedColor === color ? 'ring-1 ring-black ring-offset-2' : ''}`} style={{ backgroundColor: color }} />)}</div></fieldset>
+          <fieldset className="mt-5"><legend className="text-sm font-semibold">Color: <span className="font-normal text-[#777]">{colorName}</span></legend><div className="mt-3 flex gap-2.5">{(product.colors?.length ? product.colors : ['#8db4d2', '#000000', '#ffd1dc']).slice(0, 3).map((color: string, index: number) => <button key={`${color}-${index}`} type="button" onClick={() => setSelectedColor(color)} aria-label={`Select color ${colorNames[color.toLowerCase()] ?? index + 1}`} aria-pressed={selectedColor === color} className={`grid size-7 place-items-center rounded-full ${selectedColor === color ? 'ring-1 ring-black ring-offset-2' : ''}`} style={{ backgroundColor: color }} />)}</div></fieldset>
 
           <div className="mt-6 grid grid-cols-[112px_1fr] gap-3">
             <div className={`flex h-11 items-center justify-between border border-[#ddd] px-2 ${soldOut ? 'opacity-50' : ''}`}><button type="button" disabled={soldOut} aria-label="Decrease quantity" onClick={() => setQuantity((value) => Math.max(1, value - 1))} className="grid size-7 place-items-center text-[#777] disabled:cursor-not-allowed">−</button><span aria-live="polite" className="text-sm">{quantity}</span><button type="button" disabled={soldOut} aria-label="Increase quantity" onClick={() => setQuantity((value) => value + 1)} className="grid size-7 place-items-center text-[#777] disabled:cursor-not-allowed">+</button></div>

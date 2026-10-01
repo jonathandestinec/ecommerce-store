@@ -4,17 +4,12 @@ import ProductDetail from '@/components/product-detail'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from "next/headers";
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-  HydrationBoundary, dehydrate
+  HydrationBoundary, dehydrate, noop
 } from '@tanstack/react-query'
 import { getQueryClient } from '@/app/get-query-client';
 
 
-export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
 
   const queryClient = getQueryClient()
 
@@ -33,18 +28,15 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     return product
   }
 
-  const product = await queryClient.query({
-    queryKey: ['product'],
+  void queryClient.query({
+    queryKey: ['products'],
     queryFn: fetchProductDetail
-  })
-
-  if (!product) notFound()
+  }).catch(noop)
 
   return <>
-
     {/* Set hydration boundry around the client component */}
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProductDetail />
+      <ProductDetail params={params} />
     </HydrationBoundary>
     <Footer />
   </>
