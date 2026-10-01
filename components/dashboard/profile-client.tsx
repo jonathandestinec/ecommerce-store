@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CopyId } from "@/components/ui/copy-id"
+import { useOrdersSummary } from "@/lib/orders-query"
+import { useWishlistCount } from "@/lib/wishlist-query"
 
 const input = "h-11 w-full rounded border border-[#ccc] bg-white px-3 text-sm text-[#333] outline-none placeholder:text-[#aaa] focus:border-black"
 
@@ -18,8 +20,6 @@ export function ProfileClient({
   firstName,
   lastName,
   phone,
-  ordersCount,
-  wishlistCount,
 }: {
   email: string
   userId: string
@@ -27,10 +27,10 @@ export function ProfileClient({
   firstName: string
   lastName: string
   phone: string
-  ordersCount: number
-  wishlistCount: number
 }) {
   const router = useRouter()
+  const { count: ordersCount } = useOrdersSummary(userId)
+  const { data: wishlistCount } = useWishlistCount(userId)
   const [message, setMessage] = useState("")
   const [busy, setBusy] = useState(false)
   const displayName = `${firstName} ${lastName}`.trim()

@@ -2,15 +2,17 @@
 
 import { useRouter } from "next/navigation"
 import { LogOut } from "lucide-react"
-import { createClient } from "@/utils/supabase/client"
+import { useAuth } from "@/components/auth-provider"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 export function SettingsClient() {
   const router = useRouter()
+  const { signOut: signOutAndClearCache } = useAuth()
 
   async function signOut() {
-    await createClient().auth.signOut()
+    // Central sign-out also clears the TanStack cache (see auth-provider).
+    await signOutAndClearCache()
     router.push("/")
     router.refresh()
   }

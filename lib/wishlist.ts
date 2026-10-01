@@ -43,10 +43,11 @@ export async function syncLocalWishlistToDb(): Promise<string[]> {
   if (!user) return readLocalWishlist()
   const local = readLocalWishlist()
   if (local.length > 0) {
-    await supabase.from("wishlist_items").upsert(
+    const { error } = await supabase.from("wishlist_items").upsert(
       local.map((product_id) => ({ user_id: user.id, product_id })),
       { onConflict: "user_id,product_id", ignoreDuplicates: true }
     )
+    if (error) throw error
     writeLocalWishlist([])
   }
   return fetchDbWishlist()

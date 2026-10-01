@@ -3,6 +3,7 @@
 import * as React from "react"
 import type { User } from "@supabase/supabase-js"
 import { createClient } from "@/utils/supabase/client"
+import { getQueryClient } from "@/app/get-query-client"
 
 type AuthContextValue = {
   user: User | null
@@ -44,6 +45,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = React.useCallback(async () => {
     await createClient().auth.signOut()
+    // Drop every cached query: keys are user-scoped, but clearing guarantees
+    // the next login on this tab can never glimpse the previous user's data.
+    getQueryClient().clear()
     setUser(null)
   }, [])
 

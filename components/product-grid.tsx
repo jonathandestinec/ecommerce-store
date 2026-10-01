@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import ProductCard from './product-card'
 import { formatNaira } from '@/lib/currency'
-import { Product } from '@/types'
-import { createClient } from '@/utils/supabase/client'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { productsQueryKey } from '@/lib/products'
+import { fetchProductsClient } from '@/lib/products-client'
 
 const colors = ['#ff6c6c', '#ff7629', '#fff06c', '#9bff6c', '#6cff9e', '#6cffdc', '#6cb9ff', '#6cf6ff', '#6ca7ff', '#6c7bff', '#8a6cff', '#b66cff', '#fc6cff', '#ff6c6c']
 const columnClass: Record<number, string> = {
@@ -23,21 +23,11 @@ const filterGroups = [
 ]
 
 
-const supabase = createClient()
-
 export default function ProductGrid() {
 
-  async function fetchProducts() {
-    const { data, error } = await supabase.from("products").select()
-
-    console.log('client fetch')
-
-    return data as Product[]
-  }
-
   const { data: products } = useSuspenseQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts
+    queryKey: productsQueryKey,
+    queryFn: fetchProductsClient,
   })
 
   const [selectedColor, setSelectedColor] = useState<string | null>(null)

@@ -1,48 +1,40 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { notFound } from 'next/navigation'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowDownUp, ChevronDown, Eye, Heart, Share2, Truck } from 'lucide-react'
-import type { Product } from '@/types'
 import { products } from '@/data/products'
 import { useStore } from './store-provider'
 import { useAuth } from './auth-provider'
-import { addToDbWishlist, readLocalWishlist, removeFromDbWishlist, writeLocalWishlist } from '@/lib/wishlist'
 import { formatNaira, FREE_SHIPPING_THRESHOLD } from '@/lib/currency'
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
-import { createClient } from '@/utils/supabase/client'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { productQueryKey } from '@/lib/products'
+import { fetchProductClient } from '@/lib/products-client'
+import { useToggleWishlist, useWishlistIdsQuery } from '@/lib/wishlist-query'
 
 const sizes = ['M', 'L', 'XL', 'XXL']
 const money = formatNaira
 
-export default function ProductDetail({ params }: { params: Promise<{ id: string }> }) {
+export default function ProductDetail({ productId }: { productId: string }) {
 
-  const fetchProductDetail = async () => {
-
-    const supabase = createClient()
-
-    const { data } = await supabase.from("products")
-      .select("*")
-      .eq("id", (await params).id)
-      .single()
-
-    return data
-  }
-
-  // get the prefetched data from useQuery
   const { data: product } = useSuspenseQuery({
-    queryKey: ['product'],
-    queryFn: fetchProductDetail
+    queryKey: productQueryKey(productId),
+    queryFn: () => fetchProductClient(productId),
   })
+  if (!product) notFound()
 
   const { addToCart, openCart } = useStore()
   const { user } = useAuth()
+  // Non-suspense read: the heart must never block product render.
+  const { data: wishlistIds = [] } = useWishlistIdsQuery(user?.id ?? null)
+  const saved = wishlistIds.includes(productId)
+  const toggleWishlist = useToggleWishlist(user?.id ?? null)
   const [selectedImage, setSelectedImage] = useState(product.images[0])
   const [selectedSize, setSelectedSize] = useState('M')
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] ?? '#8db4d2')
   const [quantity, setQuantity] = useState(1)
-  const [saved, setSaved] = useState(false)
   const [added, setAdded] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState('Description')
   const gallery = [product.images[0], ...products.filter((item) => item.id !== product.id).map((item) => item.images[0])].slice(0, 7)
@@ -52,40 +44,9 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
   const colorName = colorNames[selectedColor.toLowerCase()] ?? 'Selected'
   const soldOut = product.saleStatus === 'Sold'
 
-  async function checkSaved() {
-    let active = true
-    if (user) {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('wishlist_items')
-        .select('product_id')
-        .eq('user_id', user.id)
-        .eq('product_id', (await params).id)
-        .maybeSingle()
-      if (active) setSaved(!!data)
-    } else if (typeof window !== 'undefined') {
-      if (active) setSaved(readLocalWishlist().includes((await params).id))
-    }
-
-    active = false
-  }
-
-  useQuery({
-    queryKey: ['product'],
-    queryFn: checkSaved
-  })
-
-
-  async function toggleSaved() {
-    const next = !saved
-    setSaved(next)
-    if (user) {
-      if (next) await addToDbWishlist((await params).id)
-      else await removeFromDbWishlist((await params).id)
-    } else if (typeof window !== 'undefined') {
-      const current = readLocalWishlist()
-      writeLocalWishlist(next ? [...new Set([...current, (await params).id])] : current.filter(async (id) => id !== (await params).id))
-    }
+  function toggleSaved() {
+    // Optimistic: the heart flips instantly, rollback on error.
+    toggleWishlist.mutate({ productId, next: !saved })
   }
 
   return (
@@ -105,7 +66,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
         <section className="text-[#222]">
           <div className="flex items-start justify-between gap-4">
             <div><p className="font-serif text-sm text-[#777]">FASCO</p><h1 className="mt-1 font-serif text-3xl md:text-4xl">{product.name}</h1></div>
-            <button type="button" onClick={toggleSaved} aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'} aria-pressed={saved} className={`mt-2 grid size-10 shrink-0 place-items-center rounded-full border ${saved ? 'border-black bg-black text-white' : 'border-[#eee] hover:border-black'}`}><Heart className="size-4" fill={saved ? 'currentColor' : 'none'} /></button>
+    <button type="button" onClick={toggleSaved} disabled={toggleWishlist.isPending} aria-busy={toggleWishlist.isPending} aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'} aria-pressed={saved} className={`mt-2 grid size-10 shrink-0 place-items-center rounded-full border ${saved ? 'border-black bg-black text-white' : 'border-[#eee] hover:border-black'} disabled:cursor-wait disabled:opacity-70`}><Heart className="size-4" fill={saved ? 'currentColor' : 'none'} /></button>
           </div>
           <div className="mt-2 flex items-center gap-2 text-sm"><span className="tracking-tight text-black">★★★★<span className="text-[#aaa]">★</span></span><span className="text-xs text-[#777]">(3 reviews)</span></div>
           <div className="mt-4 flex items-center gap-3"><span className="text-xl font-medium">{money(product.price)}</span>{product.discount && <><span className="text-sm text-[#888] line-through">{money(regularPrice)}</span><span className="rounded-full bg-[#e85050] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">Save {discountPercent}%</span></>}</div>

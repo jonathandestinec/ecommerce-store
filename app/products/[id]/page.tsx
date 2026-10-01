@@ -1,48 +1,27 @@
+import { notFound } from 'next/navigation'
 import Footer from '@/components/footer'
 import ProductDetail from '@/components/product-detail'
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from "next/headers";
-import {
-  HydrationBoundary, dehydrate, noop
-} from '@tanstack/react-query'
-import { getQueryClient } from '@/app/get-query-client';
-import { Suspense } from 'react';
-import { SpinnerCustom } from '@/components/ui/spinner-custom';
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query'
+import { getQueryClient } from '@/app/get-query-client'
+import { productQueryKey } from '@/lib/products'
+import { fetchProductServer } from '@/lib/products-server'
 
-
-export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const queryClient = getQueryClient()
 
-
-  const fetchProductDetail = async () => {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore)
-
-    const { id } = await params
-    const { data: product } = await supabase.from("products")
-      .select("*")
-      .eq("id", id)
-      .single()
-
-    return product
-  }
-
-  void queryClient.query({
-    queryKey: ['product'],
-    queryFn: fetchProductDetail
-  }).catch(noop)
+  // Key includes the id: every product gets its own cache entry.
+  // Errors propagate to app/products/[id]/error.tsx; missing product → 404.
+  const product = await queryClient.query({
+    queryKey: productQueryKey(id),
+    queryFn: () => fetchProductServer(id),
+  })
+  if (!product) notFound()
 
   return <>
-    {/* Set hydration boundry around the client component */}
+    {/* loading.tsx owns the loading state; key remounts detail per product */}
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={
-        <div className="flex items-center justify-center mt-10">
-          <SpinnerCustom />
-        </div>
-      }>
-        <ProductDetail params={params} />
-      </Suspense>
+      <ProductDetail key={id} productId={id} />
     </HydrationBoundary>
     <Footer />
   </>
