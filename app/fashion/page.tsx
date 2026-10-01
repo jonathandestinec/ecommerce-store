@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Footer from '@/components/footer'
 import PageTitle from '@/components/page-title'
 import ProductGrid from '@/components/product-grid'
@@ -6,7 +8,6 @@ import { dehydrate, HydrationBoundary, noop } from '@tanstack/react-query'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { Suspense } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { SpinnerCustom } from '@/components/ui/spinner-custom'
 
 export default function FashionPage() {
