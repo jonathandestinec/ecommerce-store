@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation'
 import Footer from '@/components/footer'
 import ProductDetail from '@/components/product-detail'
 import { createClient } from '@/utils/supabase/server'
@@ -8,9 +7,7 @@ import {
 } from '@tanstack/react-query'
 import { getQueryClient } from '@/app/get-query-client';
 import { Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { SpinnerCustom } from '@/components/ui/spinner-custom';
-import { Divide } from 'lucide-react';
 
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
